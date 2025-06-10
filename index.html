@@ -1,0 +1,1087 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>نظام إدارة الاستفسارات والشكاوى والصيانة</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f5f5f5;
+        }
+        .login-container {
+            max-width: 400px;
+            margin: 100px auto;
+            padding: 20px;
+            background: #fff;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .main-container {
+            display: none;
+            padding: 20px;
+        }
+        .form-section {
+            display: none;
+            background: #fff;
+            padding: 20px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.05);
+        }
+        .active-form {
+            display: block;
+        }
+        .ticket-card {
+            border: 2px dashed #007bff;
+            border-radius: 18px 18px 18px 18px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.07);
+            background: #fff;
+            position: relative;
+            margin-bottom: 18px;
+            overflow: visible;
+        }
+        .ticket-card::before, .ticket-card::after {
+            content: '';
+            position: absolute;
+            width: 24px;
+            height: 24px;
+            background: #f5f5f5;
+            border-radius: 50%;
+            z-index: 2;
+        }
+        .ticket-card::before {
+            left: -13px;
+            top: 18px;
+        }
+        .ticket-card::after {
+            right: -13px;
+            bottom: 18px;
+        }
+        .ticket-icon {
+            position: absolute;
+            top: -18px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #fff;
+            border-radius: 50%;
+            padding: 2px 7px;
+            font-size: 1.5rem;
+            color: #007bff;
+            z-index: 3;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+        }
+        .ticket-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        .status-open {
+            border-left: 5px solid #ffc107;
+        }
+        .status-closed {
+            border-left: 5px solid #28a745;
+        }
+        .status-pending {
+            border-left: 5px solid #17a2b8;
+        }
+        .customer-profile {
+            background: #fff;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.05);
+        }
+        /* تصغير حجم الأيقونات في الأزرار */
+        .btn i {
+            margin-left: 6px;
+            margin-right: 2px;
+            font-size: 1.1em;
+            vertical-align: middle;
+        }
+    </style>
+</head>
+<body>
+    <!-- صفحة تسجيل الدخول -->
+    <div id="login-page" class="login-container">
+        <h2 class="text-center mb-4">تسجيل الدخول</h2>
+        <form id="login-form">
+            <div class="mb-3">
+                <label for="username" class="form-label">اسم المستخدم</label>
+                <input type="text" class="form-control" id="username" required>
+            </div>
+            <div class="mb-3">
+                <label for="password" class="form-label">كلمة المرور</label>
+                <input type="password" class="form-control" id="password" required>
+            </div>
+            <button type="submit" class="btn btn-primary w-100">دخول</button>
+        </form>
+    </div>
+
+    <!-- الصفحة الرئيسية -->
+    <div id="main-page" class="container main-container">
+        <!-- شريط التنقل -->
+        <nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4">
+            <div class="container-fluid">
+                <a class="navbar-brand" href="#">نظام الإدارة</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav me-auto">
+                        <li class="nav-item">
+                            <a class="nav-link active" href="#" id="employee-dashboard-link">لوحة الموظف</a>
+                        </li>
+                        <li class="nav-item" id="admin-link-item" style="display: none;">
+                            <a class="nav-link" href="#" id="admin-dashboard-link">لوحة المدير</a>
+                        </li>
+                    </ul>
+                    <button class="btn btn-outline-light" id="logout-btn">تسجيل الخروج</button>
+                </div>
+            </div>
+        </nav>
+
+        <!-- لوحة الموظف -->
+        <div id="employee-dashboard" class="form-section active-form">
+            <h3 class="mb-4">لوحة الموظف</h3>
+            <div class="row mb-4">
+                <div class="col-md-6">
+                    <div class="input-group">
+                        <input type="text" id="customer-search" class="form-control" placeholder="ابحث برقم الهاتف أو اسم العميل أو رقم التذكرة">
+                        <button class="btn btn-primary" id="search-customer-btn">بحث</button>
+                    </div>
+                </div>
+                <div class="col-md-6 text-end">
+                    <button class="btn btn-success" id="new-customer-btn">عميل جديد</button>
+                </div>
+            </div>
+
+            <!-- بروفيل العميل -->
+            <div id="customer-profile" class="customer-profile" style="display: none;">
+                <h4 id="customer-name">اسم العميل: <span></span></h4>
+                <p id="customer-phone">رقم الهاتف: <span></span></p>
+                <p id="customer-governorate">المحافظة: <span></span></p>
+                <p id="customer-region">المنطقة: <span></span></p>
+
+                <h5 class="mt-4">التذاكر</h5>
+                <div id="customer-tickets"></div>
+
+                <h5 class="mt-4">إضافة تذكرة جديدة</h5>
+                <form id="new-ticket-form">
+                    <div class="row mb-3">
+                        <div class="col-md-4">
+                            <label for="ticket-type" class="form-label">نوع التذكرة</label>
+                            <select class="form-select" id="ticket-type" required>
+                                <option value="">اختر النوع</option>
+                                <option value="inquiry">استفسار</option>
+                                <option value="complaint">شكوى</option>
+                                <option value="maintenance">صيانة</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4" id="ticket-subtype-container" style="display: none;">
+                            <label for="ticket-subtype" class="form-label">النوع الفرعي</label>
+                            <select class="form-select" id="ticket-subtype">
+                                <!-- سيتم ملؤه ديناميكيًا -->
+                            </select>
+                        </div>
+                        <div class="col-md-4" id="maintenance-schedule-container" style="display: none;">
+                            <label for="maintenance-schedule" class="form-label">موعد الصيانة</label>
+                            <input type="datetime-local" class="form-control" id="maintenance-schedule">
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="ticket-description" class="form-label">الوصف</label>
+                        <textarea class="form-control" id="ticket-description" rows="3" required></textarea>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="ticket-date" class="form-label">التاريخ</label>
+                        <input type="date" class="form-control" id="ticket-date" required readonly>
+                    </div>
+
+                    <input type="hidden" id="employee-name">
+                    <input type="hidden" id="customer-id">
+
+                    <button type="submit" class="btn btn-primary">حفظ</button>
+                    <button type="button" class="btn btn-secondary" id="clear-ticket-form">تفريغ الحقول</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- لوحة المدير -->
+        <div id="admin-dashboard" class="form-section">
+            <h3 class="mb-4">لوحة المدير</h3>
+            <div class="row mb-4">
+                <div class="col-md-6">
+                    <div class="input-group">
+                        <input type="text" id="admin-search" class="form-control" placeholder="ابحث برقم الهاتف أو رقم التذكرة أو اسم العميل">
+                        <button class="btn btn-primary" id="admin-search-btn"><i class="bi bi-search"></i>بحث</button>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <select class="form-select" id="ticket-status-filter">
+                        <option value="all">جميع الحالات</option>
+                        <option value="open">مفتوحة</option>
+                        <option value="closed">مغلقة</option>
+                        <option value="pending">قيد الانتظار</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <select class="form-select" id="ticket-type-filter">
+                        <option value="all">جميع الأنواع</option>
+                        <option value="inquiry">استفسار</option>
+                        <option value="complaint">شكوى</option>
+                        <option value="maintenance">صيانة</option>
+                    </select>
+                </div>
+            </div>
+            <!-- بحث بالتاريخ واستخراج ملف -->
+            <div class="row mb-3">
+                <div class="col-md-4">
+                    <input type="date" class="form-control" id="admin-date-filter">
+                </div>
+                <div class="col-md-2">
+                    <button class="btn btn-secondary w-100" id="admin-date-search-btn"><i class="bi bi-calendar-event"></i>بحث فقط</button>
+                </div>
+                <div class="col-md-2">
+                    <button class="btn btn-success w-100" id="export-excel-btn"><i class="bi bi-file-earmark-excel"></i>استخراج ملف</button>
+                </div>
+                <!-- بحث موعد الصيانة -->
+                <div class="col-md-4 mt-2 mt-md-0">
+                    <div class="input-group">
+                        <input type="date" class="form-control border-primary" id="maintenance-date-filter" style="border-width:2px;">
+                        <button class="btn btn-primary" id="maintenance-date-search-btn" style="min-width:120px;"><i class="bi bi-tools"></i>بحث موعد الصيانة</button>
+                    </div>
+                </div>
+            </div>
+            <div id="admin-tickets-list" class="row"></div>
+        </div>
+
+        <!-- نموذج عميل جديد -->
+        <div id="new-customer-form" class="form-section">
+            <h3 class="mb-4">عميل جديد</h3>
+            <form id="customer-form">
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label for="new-customer-name" class="form-label">اسم العميل</label>
+                        <input type="text" class="form-control" id="new-customer-name" required>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="new-customer-phone" class="form-label">رقم الهاتف الأساسي</label>
+                        <input type="text" class="form-control" id="new-customer-phone" required>
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label for="new-customer-phone2" class="form-label">رقم الهاتف الثانوي (اختياري)</label>
+                        <input type="text" class="form-control" id="new-customer-phone2">
+                    </div>
+                    <div class="col-md-6">
+                        <label for="new-customer-governorate" class="form-label">المحافظة</label>
+                        <select class="form-select" id="new-customer-governorate" required>
+                            <option value="">اختر المحافظة</option>
+                            <!-- سيتم ملؤه ديناميكيًا -->
+                        </select>
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label for="new-customer-region" class="form-label">المنطقة</label>
+                        <input type="text" class="form-control" id="new-customer-region" disabled required>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-primary">حفظ</button>
+                <button type="button" class="btn btn-secondary" id="cancel-new-customer">إلغاء</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js"></script>
+    <script>
+        // بيانات التطبيق
+        const users = [
+            { username: 'admin', password: '0000', role: 'admin', name: 'مدير النظام' },
+            { username: 'Ahmed', password: '1111', role: 'employee', name: 'أحمد' },
+            { username: 'Adam', password: '2222', role: 'employee', name: 'آدم' }
+        ];
+
+        const governorates = {
+            'القاهرة': ['المعادي', 'المقطم', 'مدينة نصر', 'الزمالك', 'الدقي'],
+            'الجيزة': ['الدقي', 'المهندسين', 'الهرم', 'فيصل', 'العجوزة'],
+            'الإسكندرية': ['سيدي جابر', 'المنتزه', 'العصافرة', 'السيوف', 'المعمورة']
+        };
+
+        const ticketSubtypes = {
+            inquiry: ['استفسار عن 1', 'استفسار عن 2', 'استفسار عن 3'],
+            complaint: ['شكوى عن 1', 'شكوى عن 2', 'شكوى عن 3'],
+            maintenance: ['صيانة 1', 'صيانة 2', 'صيانة 3']
+        };
+
+        let customers = [];
+        let tickets = [];
+        let currentUser = null;
+        let currentCustomer = null;
+
+        // متغير لتخزين التذاكر المعروضة حاليًا
+        let currentlyDisplayedTickets = [];
+
+        // متغير لتخزين نتائج بحث موعد الصيانة
+        let maintenanceDateTickets = [];
+
+        // DOM Elements
+        const loginPage = document.getElementById('login-page');
+        const mainPage = document.getElementById('main-page');
+        const loginForm = document.getElementById('login-form');
+        const logoutBtn = document.getElementById('logout-btn');
+        const employeeDashboard = document.getElementById('employee-dashboard');
+        const adminDashboard = document.getElementById('admin-dashboard');
+        const adminLinkItem = document.getElementById('admin-link-item');
+        const employeeDashboardLink = document.getElementById('employee-dashboard-link');
+        const adminDashboardLink = document.getElementById('admin-dashboard-link');
+        const customerSearch = document.getElementById('customer-search');
+        const searchCustomerBtn = document.getElementById('search-customer-btn');
+        const newCustomerBtn = document.getElementById('new-customer-btn');
+        const customerProfile = document.getElementById('customer-profile');
+        const newTicketForm = document.getElementById('new-ticket-form');
+        const clearTicketFormBtn = document.getElementById('clear-ticket-form');
+        const ticketType = document.getElementById('ticket-type');
+        const ticketSubtypeContainer = document.getElementById('ticket-subtype-container');
+        const ticketSubtype = document.getElementById('ticket-subtype');
+        const maintenanceScheduleContainer = document.getElementById('maintenance-schedule-container');
+        const newCustomerForm = document.getElementById('new-customer-form');
+        const customerForm = document.getElementById('customer-form');
+        const cancelNewCustomerBtn = document.getElementById('cancel-new-customer');
+        const adminSearch = document.getElementById('admin-search');
+        const adminSearchBtn = document.getElementById('admin-search-btn');
+        const adminTicketsList = document.getElementById('admin-tickets-list');
+        const ticketStatusFilter = document.getElementById('ticket-status-filter');
+        const ticketTypeFilter = document.getElementById('ticket-type-filter');
+        const adminDateFilter = document.getElementById('admin-date-filter');
+        const adminDateSearchBtn = document.getElementById('admin-date-search-btn');
+        const exportExcelBtn = document.getElementById('export-excel-btn');
+        const maintenanceDateFilter = document.getElementById('maintenance-date-filter');
+        const maintenanceDateSearchBtn = document.getElementById('maintenance-date-search-btn');
+
+        // أحداث الصفحة
+        document.addEventListener('DOMContentLoaded', function() {
+            // تعبئة محافظات في نموذج العميل الجديد
+            const governorateSelect = document.getElementById('new-customer-governorate');
+            for (const gov in governorates) {
+                const option = document.createElement('option');
+                option.value = gov;
+                option.textContent = gov;
+                governorateSelect.appendChild(option);
+            }
+
+            // إضافة بيانات وهمية للاختبار
+            addSampleData();
+        });
+
+        // تسجيل الدخول
+        loginForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            
+            const user = users.find(u => u.username === username && u.password === password);
+            
+            if (user) {
+                currentUser = user;
+                loginPage.style.display = 'none';
+                mainPage.style.display = 'block';
+                
+                // تعبئة اسم الموظف في النموذج
+                document.getElementById('employee-name').value = user.name;
+                
+                // إظهار أو إخفاء رابط المدير
+                if (user.role === 'admin') {
+                    adminLinkItem.style.display = 'block';
+                    showAdminDashboard();
+                } else {
+                    adminLinkItem.style.display = 'none';
+                    showEmployeeDashboard();
+                }
+                
+                alert(`مرحباً ${user.name}! تم تسجيل الدخول بنجاح.`);
+            } else {
+                alert('اسم المستخدم أو كلمة المرور غير صحيحة!');
+            }
+        });
+
+        // تسجيل الخروج
+        logoutBtn.addEventListener('click', function() {
+            currentUser = null;
+            mainPage.style.display = 'none';
+            loginPage.style.display = 'block';
+            document.getElementById('username').value = '';
+            document.getElementById('password').value = '';
+            hideCustomerProfile();
+        });
+
+        // التنقل بين لوحات الموظف والمدير
+        employeeDashboardLink.addEventListener('click', function(e) {
+            e.preventDefault();
+            showEmployeeDashboard();
+        });
+
+        adminDashboardLink.addEventListener('click', function(e) {
+            e.preventDefault();
+            showAdminDashboard();
+        });
+
+        function showEmployeeDashboard() {
+            employeeDashboard.classList.add('active-form');
+            adminDashboard.classList.remove('active-form');
+            newCustomerForm.classList.remove('active-form');
+            hideCustomerProfile();
+        }
+
+        function showAdminDashboard() {
+            employeeDashboard.classList.remove('active-form');
+            adminDashboard.classList.add('active-form');
+            newCustomerForm.classList.remove('active-form');
+            hideCustomerProfile();
+            loadAdminTickets();
+        }
+
+        // البحث عن عميل
+        searchCustomerBtn.addEventListener('click', function() {
+            const searchValue = customerSearch.value.trim();
+            if (!searchValue) {
+                alert('الرجاء إدخال رقم الهاتف أو اسم العميل أو رقم التذكرة للبحث');
+                return;
+            }
+            let customer = null;
+            // إذا كان البحث رقم
+            if (!isNaN(searchValue)) {
+                // ابحث برقم الهاتف أو رقم التذكرة
+                customer = customers.find(c => c.phone === searchValue || c.phone2 === searchValue);
+                if (!customer) {
+                    // ابحث برقم التذكرة
+                    const ticket = tickets.find(t => t.id === searchValue);
+                    if (ticket) {
+                        customer = customers.find(c => c.id === ticket.customerId);
+                    }
+                }
+            } else {
+                // ابحث بالاسم
+                customer = customers.find(c => c.name.includes(searchValue));
+            }
+            if (customer) {
+                showCustomerProfile(customer);
+            } else {
+                if (confirm('لا يوجد عميل بهذه البيانات. هل تريد إنشاء حساب جديد؟')) {
+                    showNewCustomerForm(searchValue);
+                }
+            }
+        });
+
+        // عرض بروفيل العميل
+        function showCustomerProfile(customer) {
+            currentCustomer = customer;
+            
+            document.getElementById('customer-name').querySelector('span').textContent = customer.name;
+            document.getElementById('customer-phone').querySelector('span').textContent = customer.phone;
+            document.getElementById('customer-governorate').querySelector('span').textContent = customer.governorate;
+            document.getElementById('customer-region').querySelector('span').textContent = customer.region;
+            document.getElementById('customer-id').value = customer.id;
+            
+            // عرض تذاكر العميل
+            const customerTickets = tickets.filter(t => t.customerId === customer.id);
+            const ticketsContainer = document.getElementById('customer-tickets');
+            ticketsContainer.innerHTML = '';
+            
+            if (customerTickets.length === 0) {
+                ticketsContainer.innerHTML = '<p>لا توجد تذاكر لهذا العميل</p>';
+            } else {
+                customerTickets.forEach(ticket => {
+                    const ticketCard = createTicketCard(ticket, false);
+                    ticketsContainer.appendChild(ticketCard);
+                });
+            }
+            
+            customerProfile.style.display = 'block';
+            setTodayForTicketDate();
+        }
+
+        function hideCustomerProfile() {
+            customerProfile.style.display = 'none';
+            currentCustomer = null;
+            customerSearch.value = '';
+        }
+
+        // إنشاء بطاقة تذكرة
+        function createTicketCard(ticket, isAdmin = false) {
+            const card = document.createElement('div');
+            card.className = `card ticket-card status-${ticket.status}`;
+            
+            // أيقونة تذكرة أعلى البطاقة
+            const icon = document.createElement('span');
+            icon.className = 'ticket-icon';
+            icon.innerHTML = '<i class="bi bi-ticket-perforated"></i>';
+            card.appendChild(icon);
+            
+            const cardBody = document.createElement('div');
+            cardBody.className = 'card-body';
+            
+            const title = document.createElement('h5');
+            title.className = 'card-title';
+            
+            let typeText = '';
+            if (ticket.type === 'inquiry') typeText = 'استفسار';
+            else if (ticket.type === 'complaint') typeText = 'شكوى';
+            else if (ticket.type === 'maintenance') typeText = 'صيانة';
+            
+            title.textContent = `تذكرة #${ticket.id} - ${typeText}`;
+            
+            const subtitle = document.createElement('h6');
+            subtitle.className = 'card-subtitle mb-2 text-muted';
+            subtitle.textContent = `بتاريخ: ${ticket.date}`;
+            
+            const type = document.createElement('p');
+            type.className = 'card-text';
+            type.textContent = `النوع: ${ticket.subtype}`;
+            
+            const desc = document.createElement('div');
+            desc.className = 'card-text';
+            desc.innerHTML = `<div style="border:1px solid #ccc; border-radius:5px; background:#f9f9f9; padding:7px 10px; margin-bottom:7px; font-size:0.97em;">${ticket.description}</div>`;
+            
+            const employee = document.createElement('p');
+            employee.className = 'card-text';
+            employee.textContent = `الموظف: ${ticket.employee}`;
+            
+            const status = document.createElement('p');
+            status.className = 'card-text';
+            
+            let statusText = '';
+            if (ticket.status === 'open') statusText = 'مفتوحة';
+            else if (ticket.status === 'closed') statusText = 'مغلقة';
+            else if (ticket.status === 'pending') statusText = 'قيد الانتظار';
+            
+            status.textContent = `الحالة: ${statusText}`;
+            
+            cardBody.appendChild(title);
+            cardBody.appendChild(subtitle);
+            cardBody.appendChild(type);
+            cardBody.appendChild(desc);
+            cardBody.appendChild(employee);
+            cardBody.appendChild(status);
+            
+            if (ticket.type === 'maintenance' && ticket.schedule) {
+                const schedule = document.createElement('p');
+                schedule.className = 'card-text';
+                
+                // تحويل الوقت إلى صيغة 12 ساعة مع AM/PM
+                const scheduleDate = new Date(ticket.schedule);
+                let hours = scheduleDate.getHours();
+                const ampm = hours >= 12 ? 'PM' : 'AM';
+                hours = hours % 12;
+                hours = hours ? hours : 12; // الساعة 0 تصبح 12
+                const minutes = scheduleDate.getMinutes().toString().padStart(2, '0');
+                
+                schedule.textContent = `موعد الصيانة: ${scheduleDate.toLocaleDateString()} ${hours}:${minutes} ${ampm}`;
+                cardBody.appendChild(schedule);
+            }
+            
+            if (ticket.type === 'complaint' && ticket.adminReply) {
+                const reply = document.createElement('div');
+                reply.className = 'card-text text-primary';
+                reply.innerHTML = `<div style="border:1px solid #007bff; border-radius:5px; background:#eef6ff; padding:7px 10px; margin-bottom:7px; font-size:0.97em;">رد المدير: ${ticket.adminReply}</div>`;
+                cardBody.appendChild(reply);
+            }
+            
+            if (isAdmin && currentUser.role === 'admin') {
+                const statusSelect = document.createElement('select');
+                statusSelect.className = 'form-select mb-3';
+                
+                const options = [
+                    { value: 'open', text: 'مفتوحة' },
+                    { value: 'closed', text: 'مغلقة' },
+                    { value: 'pending', text: 'قيد الانتظار' }
+                ];
+                
+                options.forEach(opt => {
+                    const option = document.createElement('option');
+                    option.value = opt.value;
+                    option.textContent = opt.text;
+                    option.selected = ticket.status === opt.value;
+                    statusSelect.appendChild(option);
+                });
+                
+                statusSelect.addEventListener('change', function() {
+                    updateTicketStatus(ticket.id, this.value);
+                });
+                
+                if (ticket.type === 'complaint' && ticket.status !== 'closed') {
+                    const replyDiv = document.createElement('div');
+                    replyDiv.className = 'mb-3';
+                    
+                    const replyLabel = document.createElement('label');
+                    replyLabel.className = 'form-label';
+                    replyLabel.textContent = 'رد المدير';
+                    
+                    const replyTextarea = document.createElement('textarea');
+                    replyTextarea.className = 'form-control';
+                    replyTextarea.rows = 2;
+                    replyTextarea.placeholder = 'أدخل رد المدير هنا...';
+                    replyTextarea.value = ticket.adminReply || '';
+                    
+                    const replyButton = document.createElement('button');
+                    replyButton.className = 'btn btn-sm btn-primary mt-2';
+                    replyButton.textContent = 'حفظ الرد';
+                    replyButton.addEventListener('click', function() {
+                        updateAdminReply(ticket.id, replyTextarea.value);
+                    });
+                    
+                    replyDiv.appendChild(replyLabel);
+                    replyDiv.appendChild(replyTextarea);
+                    replyDiv.appendChild(replyButton);
+                    cardBody.appendChild(replyDiv);
+                }
+                
+                cardBody.appendChild(statusSelect);
+            }
+            
+            // إضافة بيانات العميل في صفحة المدير فقط (مباشرة بعد رقم التذكرة)
+            if (isAdmin) {
+                const customer = customers.find(c => c.id === ticket.customerId);
+                if (customer) {
+                    const customerInfo = document.createElement('div');
+                    customerInfo.className = 'mb-2';
+                    customerInfo.innerHTML = `
+                        <strong>اسم العميل:</strong> ${customer.name} <br>
+                        <strong>رقم الهاتف:</strong> ${customer.phone} <br>
+                        <strong>المحافظة:</strong> ${customer.governorate} <br>
+                        <strong>المنطقة:</strong> ${customer.region}
+                    `;
+                    cardBody.appendChild(customerInfo);
+                }
+            }
+            
+            card.appendChild(cardBody);
+            
+            // عند النقر على التذكرة في لوحة المدير، عرض بروفيل العميل
+            if (isAdmin) {
+                card.addEventListener('click', function() {
+                    const customer = customers.find(c => c.id === ticket.customerId);
+                    if (customer) {
+                        showCustomerProfile(customer);
+                    }
+                });
+            }
+            
+            return card;
+        }
+
+        // تغيير نوع التذكرة
+        ticketType.addEventListener('change', function() {
+            const type = this.value;
+            
+            ticketSubtypeContainer.style.display = type ? 'block' : 'none';
+            maintenanceScheduleContainer.style.display = type === 'maintenance' ? 'block' : 'none';
+            
+            if (type) {
+                // تعبئة الأنواع الفرعية
+                ticketSubtype.innerHTML = '';
+                ticketSubtypes[type].forEach(subtype => {
+                    const option = document.createElement('option');
+                    option.value = subtype;
+                    option.textContent = subtype;
+                    ticketSubtype.appendChild(option);
+                });
+            }
+        });
+
+        // إضافة تذكرة جديدة
+        newTicketForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            if (!currentCustomer) {
+                alert('الرجاء تحديد عميل أولاً');
+                return;
+            }
+            
+            const type = ticketType.value;
+            const subtype = ticketSubtype.value;
+            const description = document.getElementById('ticket-description').value;
+            const date = document.getElementById('ticket-date').value;
+            const employee = document.getElementById('employee-name').value;
+            const customerId = document.getElementById('customer-id').value;
+            
+            if (!type || !subtype || !description || !date) {
+                alert('الرجاء ملء جميع الحقول المطلوبة');
+                return;
+            }
+            
+            const newTicket = {
+                id: getNextTicketId(),
+                type,
+                subtype,
+                description,
+                date,
+                employee,
+                customerId,
+                status: type === 'inquiry' ? 'closed' : 'open',
+                createdAt: new Date().toISOString()
+            };
+            
+            if (type === 'maintenance') {
+                const schedule = document.getElementById('maintenance-schedule').value;
+                if (!schedule) {
+                    alert('الرجاء تحديد موعد الصيانة');
+                    return;
+                }
+                newTicket.schedule = schedule;
+            }
+            
+            tickets.push(newTicket);
+            alert('تم حفظ التذكرة بنجاح');
+            clearTicketForm();
+            
+            // تحديث عرض التذاكر
+            if (currentCustomer) {
+                showCustomerProfile(currentCustomer);
+            }
+        });
+
+        // تفريغ نموذج التذكرة
+        clearTicketFormBtn.addEventListener('click', clearTicketForm);
+
+        function clearTicketForm() {
+            ticketType.value = '';
+            ticketSubtype.value = '';
+            document.getElementById('ticket-description').value = '';
+            document.getElementById('ticket-date').value = '';
+            document.getElementById('maintenance-schedule').value = '';
+            ticketSubtypeContainer.style.display = 'none';
+            maintenanceScheduleContainer.style.display = 'none';
+        }
+
+        // عرض نموذج عميل جديد
+        newCustomerBtn.addEventListener('click', function() {
+            showNewCustomerForm();
+        });
+
+        function showNewCustomerForm(phone = '') {
+            employeeDashboard.classList.remove('active-form');
+            adminDashboard.classList.remove('active-form');
+            newCustomerForm.classList.add('active-form');
+            hideCustomerProfile();
+            
+            document.getElementById('new-customer-name').value = '';
+            document.getElementById('new-customer-phone').value = phone;
+            document.getElementById('new-customer-phone2').value = '';
+            document.getElementById('new-customer-governorate').value = '';
+            document.getElementById('new-customer-region').value = '';
+            document.getElementById('new-customer-region').disabled = true;
+        }
+
+        // تغيير المحافظة
+        document.getElementById('new-customer-governorate').addEventListener('change', function() {
+            const gov = this.value;
+            const regionInput = document.getElementById('new-customer-region');
+            regionInput.value = '';
+            regionInput.disabled = !gov;
+        });
+
+        // حفظ عميل جديد
+        customerForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const name = document.getElementById('new-customer-name').value;
+            const phone = document.getElementById('new-customer-phone').value;
+            const phone2 = document.getElementById('new-customer-phone2').value;
+            const governorate = document.getElementById('new-customer-governorate').value;
+            const region = document.getElementById('new-customer-region').value;
+            
+            if (!name || !phone || !governorate || !region) {
+                alert('الرجاء ملء جميع الحقول المطلوبة');
+                return;
+            }
+            
+            // التحقق من عدم وجود عميل بنفس رقم الهاتف
+            const existingCustomer = customers.find(c => c.phone === phone || (phone2 && c.phone2 === phone2));
+            if (existingCustomer) {
+                alert('يوجد بالفعل عميل بهذا الرقم!');
+                return;
+            }
+            
+            const newCustomer = {
+                id: generateId(),
+                name,
+                phone,
+                phone2,
+                governorate,
+                region
+            };
+            
+            customers.push(newCustomer);
+            alert('تم حفظ العميل بنجاح');
+            
+            // تفعيل لوحة الموظف ثم عرض بروفايل العميل الجديد
+            showEmployeeDashboard();
+            showCustomerProfile(newCustomer);
+        });
+
+        // إلغاء إنشاء عميل جديد
+        cancelNewCustomerBtn.addEventListener('click', function() {
+            showEmployeeDashboard();
+        });
+
+        // لوحة المدير - تحميل التذاكر
+        function loadAdminTickets() {
+            const searchValue = adminSearch.value.trim();
+            const statusFilter = ticketStatusFilter.value;
+            const typeFilter = ticketTypeFilter.value;
+            let filteredTickets = [...tickets];
+            // بحث متقدم
+            if (searchValue) {
+                filteredTickets = filteredTickets.filter(t => {
+                    // ابحث برقم التذكرة
+                    if (t.id === searchValue) return true;
+                    // ابحث باسم العميل أو رقم الهاتف
+                    const customer = customers.find(c => c.id === t.customerId);
+                    if (customer) {
+                        if (customer.name.includes(searchValue)) return true;
+                        if (customer.phone === searchValue || customer.phone2 === searchValue) return true;
+                    }
+                    return false;
+                });
+            }
+            if (statusFilter !== 'all') {
+                filteredTickets = filteredTickets.filter(t => t.status === statusFilter);
+            }
+            if (typeFilter !== 'all') {
+                filteredTickets = filteredTickets.filter(t => t.type === typeFilter);
+            }
+            // ترتيب التذاكر من الأحدث إلى الأقدم
+            filteredTickets.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+            adminTicketsList.innerHTML = '';
+            if (filteredTickets.length === 0) {
+                adminTicketsList.innerHTML = '<p>لا توجد تذاكر تطابق معايير البحث</p>';
+            } else {
+                filteredTickets.forEach(ticket => {
+                    const col = document.createElement('div');
+                    col.className = 'col-md-6';
+                    const ticketCard = createTicketCard(ticket, true);
+                    col.appendChild(ticketCard);
+                    adminTicketsList.appendChild(col);
+                });
+            }
+        }
+
+        // البحث في لوحة المدير
+        adminSearchBtn.addEventListener('click', function() {
+            loadAdminTickets();
+        });
+
+        // تصفية التذاكر في لوحة المدير
+        ticketStatusFilter.addEventListener('change', loadAdminTickets);
+        ticketTypeFilter.addEventListener('change', loadAdminTickets);
+
+        // تحديث حالة التذكرة
+        function updateTicketStatus(ticketId, newStatus) {
+            const ticketIndex = tickets.findIndex(t => t.id === ticketId);
+            
+            if (ticketIndex !== -1) {
+                tickets[ticketIndex].status = newStatus;
+                alert('تم تحديث حالة التذكرة');
+                loadAdminTickets();
+                
+                // إذا كان العميل معروضًا، قم بتحديث عرض التذاكر
+                if (currentCustomer) {
+                    showCustomerProfile(currentCustomer);
+                }
+            }
+        }
+
+        // تحديث رد المدير على الشكوى
+        function updateAdminReply(ticketId, reply) {
+            const ticketIndex = tickets.findIndex(t => t.id === ticketId);
+            
+            if (ticketIndex !== -1) {
+                tickets[ticketIndex].adminReply = reply;
+                alert('تم حفظ رد المدير');
+                loadAdminTickets();
+                
+                // إذا كان العميل معروضًا، قم بتحديث عرض التذاكر
+                if (currentCustomer) {
+                    showCustomerProfile(currentCustomer);
+                }
+            }
+        }
+
+        // وظائف مساعدة
+        function generateId() {
+            return Math.floor(Math.random() * 1000000).toString();
+        }
+
+        function addSampleData() {
+            // عملاء وهميين
+            customers = [
+                
+            ];
+            
+            // حذف التذاكر الوهمية
+            tickets = [];
+        }
+
+        // عند عرض بروفايل العميل أو فتح نموذج التذكرة الجديدة، يتم تعيين تاريخ اليوم تلقائيًا
+        function setTodayForTicketDate() {
+            const today = new Date();
+            const yyyy = today.getFullYear();
+            const mm = String(today.getMonth() + 1).padStart(2, '0');
+            const dd = String(today.getDate()).padStart(2, '0');
+            document.getElementById('ticket-date').value = `${yyyy}-${mm}-${dd}`;
+        }
+
+        // منطق توليد رقم التذكرة يبدأ من 1000 ويزيد واحد مع كل تذكرة جديدة
+        function getNextTicketId() {
+            if (tickets.length === 0) return '1000';
+            const maxId = Math.max(...tickets.map(t => parseInt(t.id, 10)));
+            return (maxId + 1).toString();
+        }
+
+        // عند البحث بالتاريخ أو أي بحث آخر، احفظ النتائج في currentlyDisplayedTickets
+        adminDateSearchBtn.addEventListener('click', function() {
+            const date = adminDateFilter.value;
+            if (!date) {
+                alert('يرجى اختيار التاريخ أولاً');
+                return;
+            }
+            currentlyDisplayedTickets = tickets.filter(t => t.date === date);
+            loadAdminTickets(currentlyDisplayedTickets);
+        });
+
+        // عند البحث بالنص أو الفلاتر الأخرى، احفظ النتائج أيضًا
+        adminSearchBtn.addEventListener('click', function() {
+            // استخدم نفس منطق loadAdminTickets
+            const searchValue = adminSearch.value.trim();
+            const statusFilter = ticketStatusFilter.value;
+            const typeFilter = ticketTypeFilter.value;
+            let filteredTickets = [...tickets];
+            if (searchValue) {
+                filteredTickets = filteredTickets.filter(t => {
+                    if (t.id === searchValue) return true;
+                    const customer = customers.find(c => c.id === t.customerId);
+                    if (customer) {
+                        if (customer.name.includes(searchValue)) return true;
+                        if (customer.phone === searchValue || customer.phone2 === searchValue) return true;
+                    }
+                    return false;
+                });
+            }
+            if (statusFilter !== 'all') {
+                filteredTickets = filteredTickets.filter(t => t.status === statusFilter);
+            }
+            if (typeFilter !== 'all') {
+                filteredTickets = filteredTickets.filter(t => t.type === typeFilter);
+            }
+            filteredTickets.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+            currentlyDisplayedTickets = filteredTickets;
+            loadAdminTickets(filteredTickets);
+        });
+        ticketStatusFilter.addEventListener('change', function() {
+            adminSearchBtn.click();
+        });
+        ticketTypeFilter.addEventListener('change', function() {
+            adminSearchBtn.click();
+        });
+
+        // عدل دالة loadAdminTickets لتحديث currentlyDisplayedTickets دائمًا
+        function loadAdminTickets(customTickets) {
+            const searchValue = adminSearch.value.trim();
+            const statusFilter = ticketStatusFilter.value;
+            const typeFilter = ticketTypeFilter.value;
+            let filteredTickets = customTickets ? [...customTickets] : [...tickets];
+            if (searchValue) {
+                filteredTickets = filteredTickets.filter(t => {
+                    if (t.id === searchValue) return true;
+                    const customer = customers.find(c => c.id === t.customerId);
+                    if (customer) {
+                        if (customer.name.includes(searchValue)) return true;
+                        if (customer.phone === searchValue || customer.phone2 === searchValue) return true;
+                    }
+                    return false;
+                });
+            }
+            if (statusFilter !== 'all') {
+                filteredTickets = filteredTickets.filter(t => t.status === statusFilter);
+            }
+            if (typeFilter !== 'all') {
+                filteredTickets = filteredTickets.filter(t => t.type === typeFilter);
+            }
+            filteredTickets.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+            currentlyDisplayedTickets = filteredTickets;
+            adminTicketsList.innerHTML = '';
+            if (filteredTickets.length === 0) {
+                adminTicketsList.innerHTML = '<p>لا توجد تذاكر تطابق معايير البحث</p>';
+            } else {
+                filteredTickets.forEach(ticket => {
+                    const col = document.createElement('div');
+                    col.className = 'col-md-6';
+                    const ticketCard = createTicketCard(ticket, true);
+                    col.appendChild(ticketCard);
+                    adminTicketsList.appendChild(col);
+                });
+            }
+        }
+
+        // زر استخراج ملف إكسل يصدر التذاكر المعروضة فقط
+        exportExcelBtn.addEventListener('click', function() {
+            const exportTickets = currentlyDisplayedTickets.length > 0 ? currentlyDisplayedTickets : tickets;
+            if (exportTickets.length === 0) {
+                alert('لا توجد تذاكر لاستخراجها');
+                return;
+            }
+            const data = exportTickets.map(t => {
+                const customer = customers.find(c => c.id === t.customerId) || {};
+                return {
+                    'رقم التذكرة': t.id,
+                    'نوع التذكرة': t.type === 'inquiry' ? 'استفسار' : t.type === 'complaint' ? 'شكوى' : 'صيانة',
+                    'النوع الفرعي': t.subtype,
+                    'الوصف': t.description,
+                    'تاريخ التذكرة': t.date,
+                    'الموظف': t.employee,
+                    'الحالة': t.status === 'open' ? 'مفتوحة' : t.status === 'closed' ? 'مغلقة' : 'قيد الانتظار',
+                    'اسم العميل': customer.name || '',
+                    'رقم الهاتف': customer.phone || '',
+                    'المحافظة': customer.governorate || '',
+                    'المنطقة': customer.region || '',
+                    'رد المدير': t.adminReply || '',
+                    'موعد الصيانة': t.type === 'maintenance' && t.schedule ? t.schedule.replace('T', ' ') : ''
+                };
+            });
+            const ws = XLSX.utils.json_to_sheet(data);
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, 'التذاكر');
+            // تحديد اسم الملف بناءً على تاريخ البحث
+            let filename = 'tickets.xlsx';
+            const dateVal = adminDateFilter.value;
+            if (dateVal) {
+                filename = `tickets_${dateVal}.xlsx`;
+            }
+            XLSX.writeFile(wb, filename);
+        });
+
+        // بحث تذاكر الصيانة حسب الموعد
+        maintenanceDateSearchBtn.addEventListener('click', function() {
+            const date = maintenanceDateFilter.value;
+            if (!date) {
+                alert('يرجى اختيار تاريخ موعد الصيانة أولاً');
+                return;
+            }
+            // ابحث فقط في تذاكر الصيانة التي لها موعد
+            maintenanceDateTickets = tickets.filter(t => t.type === 'maintenance' && t.schedule && t.schedule.startsWith(date));
+            currentlyDisplayedTickets = maintenanceDateTickets;
+            loadAdminTickets(maintenanceDateTickets);
+        });
+    </script>
+</body>
+</html>
