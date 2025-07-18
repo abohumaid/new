@@ -1,1087 +1,1102 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>نظام إدارة الاستفسارات والشكاوى والصيانة</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+    <title>ElFanan-Supplements</title>
+    <link rel="icon" href="icon4.png" type="image/svg+xml">
+    <!-- Firebase App (the core Firebase SDK) -->
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <!-- Firebase Realtime Database -->
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+    <!-- Firebase Analytics (اختياري) -->
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-analytics-compat.js"></script>
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Teko:wght@500;700&display=swap');
         body {
-            font-family: Arial, sans-serif;
-            background-color: #f5f5f5;
+            margin: 0;
+            font-family: 'Teko', Arial, sans-serif;
+            background: #181818;
+            color: #fff;
+            min-height: 100vh;
         }
-        .login-container {
-            max-width: 400px;
-            margin: 100px auto;
-            padding: 20px;
-            background: #fff;
-            border-radius: 5px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #222;
+            padding: 0px;
+            height: 54px;
+            box-shadow: 0 2px 8px #0006;
         }
-        .main-container {
-            display: none;
-            padding: 20px;
+        .navbar .logo {
+            font-size: 2.2rem;
+            font-weight: 700;
+            letter-spacing: 2px;
+            color: #ffb300;
+            display: flex;
+            align-items: center;
+            padding: 10px;
         }
-        .form-section {
-            display: none;
-            background: #fff;
-            padding: 20px;
-            border-radius: 5px;
-            margin-bottom: 20px;
-            box-shadow: 0 0 5px rgba(0, 0, 0, 0.05);
+        .navbar ul {
+            display: flex;
+            gap: 16px;
+            list-style: none;
+            margin: 0;
+            padding: 0;
         }
-        .active-form {
-            display: block;
-        }
-        .ticket-card {
-            border: 2px dashed #007bff;
-            border-radius: 18px 18px 18px 18px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.07);
-            background: #fff;
+        .navbar li {
+            cursor: pointer;
+            font-size: 1.6rem;
+            transition: color 0.2s;
             position: relative;
-            margin-bottom: 18px;
-            overflow: visible;
+            padding: 0 6px 2px 6px;
         }
-        .ticket-card::before, .ticket-card::after {
+        .navbar li:hover, .navbar li.active {
+            color: #ffb300;
+        }
+        .navbar li::after {
             content: '';
-            position: absolute;
-            width: 24px;
-            height: 24px;
-            background: #f5f5f5;
-            border-radius: 50%;
-            z-index: 2;
+            display: block;
+            margin: 0 auto;
+            margin-top: 4px;
+            width: 28px;
+            height: 4px;
+            border-radius: 2px;
+            background: transparent;
+            transition: background 0.2s, width 0.2s;
         }
-        .ticket-card::before {
-            left: -13px;
-            top: 18px;
+        .navbar li.active::after,
+        .navbar li:hover::after {
+            background: #ffb300;
+            width: 32px;
         }
-        .ticket-card::after {
-            right: -13px;
-            bottom: 18px;
+        #searchBarContainer {
+            margin-bottom: 0 !important;
         }
-        .ticket-icon {
-            position: absolute;
-            top: -18px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: #fff;
-            border-radius: 50%;
-            padding: 2px 7px;
-            font-size: 1.5rem;
-            color: #007bff;
-            z-index: 3;
-            box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+        #searchInput::placeholder {
+            color: #bbb;
+            opacity: 1;
         }
-        .ticket-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        #searchInput {
+            background: #232323;
+            color: #fff;
+            border: none;
+            box-shadow: 0 2px 8px #0003;
         }
-        .status-open {
-            border-left: 5px solid #ffc107;
-        }
-        .status-closed {
-            border-left: 5px solid #28a745;
-        }
-        .status-pending {
-            border-left: 5px solid #17a2b8;
-        }
-        .customer-profile {
-            background: #fff;
+        .container {
+            max-width: 1100px;
+            margin: 16px auto 0 auto;
             padding: 20px;
-            border-radius: 5px;
-            box-shadow: 0 0 5px rgba(0, 0, 0, 0.05);
+            background: #232323;
+            border-radius: 12px;
+            box-shadow: 0 4px 24px #0005;
         }
-        /* تصغير حجم الأيقونات في الأزرار */
-        .btn i {
-            margin-left: 6px;
-            margin-right: 2px;
-            font-size: 1.1em;
-            vertical-align: middle;
+        .admin-login-modal {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.7);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+        .admin-login-box {
+            background: #222;
+            padding: 32px 28px;
+            border-radius: 10px;
+            box-shadow: 0 2px 16px #000a;
+            min-width: 320px;
+            text-align: center;
+        }
+        .admin-login-box h2 {
+            margin-bottom: 18px;
+            color: #ffb300;
+            font-size: 2rem;
+        }
+        .admin-login-box input {
+            width: 90%;
+            padding: 10px;
+            margin: 10px 0;
+            border: none;
+            border-radius: 6px;
+            font-size: 1.1rem;
+        }
+        .admin-login-box button {
+            background: #ffb300;
+            color: #222;
+            border: none;
+            padding: 10px 30px;
+            border-radius: 6px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        .admin-login-box .error {
+            color: #ff4444;
+            font-size: 1rem;
+            margin-top: 8px;
+        }
+        .admin-panel {
+            text-align: right;
+        }
+        .admin-panel h2 {
+            color: #ffb300;
+            margin-bottom: 18px;
+        }
+        .add-product-btn {
+            background: #ffb300;
+            color: #222;
+            border: none;
+            padding: 10px 24px;
+            border-radius: 6px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            margin-bottom: 18px;
+        }
+        .product-form {
+            background: #232323;
+            border: 1px solid #444;
+            border-radius: 10px;
+            padding: 18px 20px;
+            margin-bottom: 24px;
+        }
+        .product-form label {
+            display: block;
+            margin: 10px 0 4px 0;
+            font-size: 1.1rem;
+        }
+        .product-form input, .product-form textarea, .product-form select {
+            width: 100%;
+            padding: 8px;
+            border-radius: 6px;
+            border: none;
+            margin-bottom: 10px;
+            font-size: 1.1rem;
+        }
+        .product-form input[type="file"] {
+            background: #fff;
+            color: #222;
+        }
+        .product-form button {
+            background: #ffb300;
+            color: #222;
+            border: none;
+            padding: 10px 24px;
+            border-radius: 6px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .products-list {
+            margin-top: 30px;
+        }
+        .product-card {
+            background: #1a1a1a;
+            border-radius: 10px;
+            box-shadow: 0 2px 12px #0005;
+            padding: 18px 20px;
+            margin-bottom: 18px;
+            display: flex;
+            gap: 18px;
+            align-items: flex-start;
+            position: relative;
+        }
+        .product-card img {
+            width: 220px;
+            height: 220px;
+            object-fit: cover;
+            border-radius: 8px;
+            border: 2px solid #ffb300;
+            background: #fff;
+        }
+        .product-info {
+            flex: 1;
+        }
+        .product-title {
+            font-size: 1.5rem;
+            color: #ffb300;
+            margin-bottom: 6px;
+        }
+        .product-desc {
+            font-size: 1.1rem;
+            margin-bottom: 8px;
+        }
+        .product-type {
+            font-size: 1rem;
+            color: #aaa;
+            margin-bottom: 6px;
+        }
+        .product-prices {
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+            font-weight: bold;
+            display: flex;
+            flex-direction: row-reverse;
+            justify-content: flex-start;
+            align-items: center;
+            gap: 12px;
+        }
+        .product-prices del {
+            color: #ff4444;
+            margin-right: 8px;
+            margin-left: 0;
+        }
+        .product-actions {
+            display: flex;
+            flex-direction: row;
+            gap: 16px;
+            justify-content: center;
+            align-items: center;
+            margin-top: 18px;
+            position: static;
+        }
+        .product-actions button {
+            background: none;
+            color: #ffb300;
+            border: none;
+            border-radius: 5px;
+            padding: 4px 6px;
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: background 0.2s, color 0.2s;
+            display: flex;
+            align-items: center;
+        }
+        .product-actions button:hover {
+            color: #222;
+            background: #ffb300;
+        }
+        .section-title {
+            font-size: 2rem;
+            color: #ffb300;
+            margin-bottom: 18px;
+            text-align: center;
+        }
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 24px;
+        }
+        .products-grid .product-card {
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            position: relative;
+            opacity: 0;
+            transform: translateY(30px);
+            animation: productFadeIn 0.35s cubic-bezier(.36,.07,.19,.97) forwards;
+            animation-delay: var(--fade-delay, 0ms);
+        }
+        @keyframes productFadeIn {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .products-grid .product-card img, .products-grid .img-slider {
+            width: 220px !important;
+            height: 220px !important;
+            max-width: 100%;
+            max-height: 100%;
+        }
+        @media (max-width: 700px) {
+            .container { padding: 8px; }
+            .navbar { flex-direction: column; height: auto; padding: 0 4px; }
+            .navbar { font-size: 1.3rem; }
+            .logo { font-size: 2rem; }
+            .navbar ul { gap: 6px; }
+            .navbar li { font-size: 1.05rem; padding: 0 2px 2px 2px; }
+        }
+        /* Splash Screen Animations */
+        @keyframes shake {
+            0% { transform: translate(0, 0) rotate(0deg); }
+            10% { transform: translate(-20px, 0) rotate(-10deg); }
+            20% { transform: translate(20px, 0) rotate(10deg); }
+            30% { transform: translate(-20px, 0) rotate(-10deg); }
+            40% { transform: translate(20px, 0) rotate(10deg); }
+            50% { transform: translate(-20px, 0) rotate(-10deg); }
+            60% { transform: translate(20px, 0) rotate(10deg); }
+            70% { transform: translate(-20px, 0) rotate(10deg); }
+            80% { transform: translate(-20px, 0) rotate(-10deg); }
+            90% { transform: translate(20px, 0) rotate(10deg); }
+            100% { transform: translate(0, 0) rotate(0deg); }
+        }
+        @keyframes dropDown {
+            0% { transform: translateY(0); }
+            80% { transform: translateY(0); }
+            100% { transform: translateY(100vh); }
+        }
+        @keyframes shakeCart {
+            0% { transform: translate(0, 0) rotate(0deg); }
+            20% { transform: translate(-4px, 0) rotate(-8deg); }
+            40% { transform: translate(4px, 0) rotate(8deg); }
+            60% { transform: translate(-4px, 0) rotate(-8deg); }
+            80% { transform: translate(4px, 0) rotate(8deg); }
+            100% { transform: translate(0, 0) rotate(0deg); }
+        }
+        .shake-cart {
+            animation: shakeCart 0.6s cubic-bezier(.36,.07,.19,.97) both;
+        }
+        .add-to-cart-msg {
+            position: fixed;
+            top: 80px;
+            right: 30px;
+            background: #25d366;
+            color: #fff;
+            font-size: 1.1rem;
+            font-weight: bold;
+            padding: 14px 28px;
+            border-radius: 10px;
+            box-shadow: 0 2px 12px #0005;
+            z-index: 99999;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s, transform 0.3s;
+        }
+        .add-to-cart-msg.show {
+            opacity: 1;
+            transform: translateY(0);
         }
     </style>
 </head>
 <body>
-    <!-- صفحة تسجيل الدخول -->
-    <div id="login-page" class="login-container">
-        <h2 class="text-center mb-4">تسجيل الدخول</h2>
-        <form id="login-form">
-            <div class="mb-3">
-                <label for="username" class="form-label">اسم المستخدم</label>
-                <input type="text" class="form-control" id="username" required>
-            </div>
-            <div class="mb-3">
-                <label for="password" class="form-label">كلمة المرور</label>
-                <input type="password" class="form-control" id="password" required>
-            </div>
-            <button type="submit" class="btn btn-primary w-100">دخول</button>
-        </form>
+    <!-- Splash Screen -->
+    <div id="splashScreen" style="position:fixed;z-index:20000;top:0;left:0;width:100vw;height:100vh;background:#181818;display:flex;align-items:center;justify-content:center;flex-direction:column;transition:opacity 0.4s;">
+        <img id="splashLogo" src="icon4.png" alt="Logo" style="width:120px;height:120px;" />
     </div>
-
-    <!-- الصفحة الرئيسية -->
-    <div id="main-page" class="container main-container">
-        <!-- شريط التنقل -->
-        <nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4">
-            <div class="container-fluid">
-                <a class="navbar-brand" href="#">نظام الإدارة</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="collapse navbar-collapse" id="navbarNav">
-                    <ul class="navbar-nav me-auto">
-                        <li class="nav-item">
-                            <a class="nav-link active" href="#" id="employee-dashboard-link">لوحة الموظف</a>
-                        </li>
-                        <li class="nav-item" id="admin-link-item" style="display: none;">
-                            <a class="nav-link" href="#" id="admin-dashboard-link">لوحة المدير</a>
-                        </li>
-                    </ul>
-                    <button class="btn btn-outline-light" id="logout-btn">تسجيل الخروج</button>
-                </div>
-            </div>
-        </nav>
-
-        <!-- لوحة الموظف -->
-        <div id="employee-dashboard" class="form-section active-form">
-            <h3 class="mb-4">لوحة الموظف</h3>
-            <div class="row mb-4">
-                <div class="col-md-6">
-                    <div class="input-group">
-                        <input type="text" id="customer-search" class="form-control" placeholder="ابحث برقم الهاتف أو اسم العميل أو رقم التذكرة">
-                        <button class="btn btn-primary" id="search-customer-btn">بحث</button>
-                    </div>
-                </div>
-                <div class="col-md-6 text-end">
-                    <button class="btn btn-success" id="new-customer-btn">عميل جديد</button>
-                </div>
-            </div>
-
-            <!-- بروفيل العميل -->
-            <div id="customer-profile" class="customer-profile" style="display: none;">
-                <h4 id="customer-name">اسم العميل: <span></span></h4>
-                <p id="customer-phone">رقم الهاتف: <span></span></p>
-                <p id="customer-governorate">المحافظة: <span></span></p>
-                <p id="customer-region">المنطقة: <span></span></p>
-
-                <h5 class="mt-4">التذاكر</h5>
-                <div id="customer-tickets"></div>
-
-                <h5 class="mt-4">إضافة تذكرة جديدة</h5>
-                <form id="new-ticket-form">
-                    <div class="row mb-3">
-                        <div class="col-md-4">
-                            <label for="ticket-type" class="form-label">نوع التذكرة</label>
-                            <select class="form-select" id="ticket-type" required>
-                                <option value="">اختر النوع</option>
-                                <option value="inquiry">استفسار</option>
-                                <option value="complaint">شكوى</option>
-                                <option value="maintenance">صيانة</option>
-                            </select>
-                        </div>
-                        <div class="col-md-4" id="ticket-subtype-container" style="display: none;">
-                            <label for="ticket-subtype" class="form-label">النوع الفرعي</label>
-                            <select class="form-select" id="ticket-subtype">
-                                <!-- سيتم ملؤه ديناميكيًا -->
-                            </select>
-                        </div>
-                        <div class="col-md-4" id="maintenance-schedule-container" style="display: none;">
-                            <label for="maintenance-schedule" class="form-label">موعد الصيانة</label>
-                            <input type="datetime-local" class="form-control" id="maintenance-schedule">
-                        </div>
-                    </div>
-
-                    <div class="mb-3">
-                        <label for="ticket-description" class="form-label">الوصف</label>
-                        <textarea class="form-control" id="ticket-description" rows="3" required></textarea>
-                    </div>
-
-                    <div class="mb-3">
-                        <label for="ticket-date" class="form-label">التاريخ</label>
-                        <input type="date" class="form-control" id="ticket-date" required readonly>
-                    </div>
-
-                    <input type="hidden" id="employee-name">
-                    <input type="hidden" id="customer-id">
-
-                    <button type="submit" class="btn btn-primary">حفظ</button>
-                    <button type="button" class="btn btn-secondary" id="clear-ticket-form">تفريغ الحقول</button>
-                </form>
-            </div>
+    <!-- نهاية شاشة التحميل -->
+    <nav class="navbar">
+        <div class="logo">
+            ElFanan-Supplements
         </div>
-
-        <!-- لوحة المدير -->
-        <div id="admin-dashboard" class="form-section">
-            <h3 class="mb-4">لوحة المدير</h3>
-            <div class="row mb-4">
-                <div class="col-md-6">
-                    <div class="input-group">
-                        <input type="text" id="admin-search" class="form-control" placeholder="ابحث برقم الهاتف أو رقم التذكرة أو اسم العميل">
-                        <button class="btn btn-primary" id="admin-search-btn"><i class="bi bi-search"></i>بحث</button>
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <select class="form-select" id="ticket-status-filter">
-                        <option value="all">جميع الحالات</option>
-                        <option value="open">مفتوحة</option>
-                        <option value="closed">مغلقة</option>
-                        <option value="pending">قيد الانتظار</option>
-                    </select>
-                </div>
-                <div class="col-md-3">
-                    <select class="form-select" id="ticket-type-filter">
-                        <option value="all">جميع الأنواع</option>
-                        <option value="inquiry">استفسار</option>
-                        <option value="complaint">شكوى</option>
-                        <option value="maintenance">صيانة</option>
-                    </select>
-                </div>
-            </div>
-            <!-- بحث بالتاريخ واستخراج ملف -->
-            <div class="row mb-3">
-                <div class="col-md-4">
-                    <input type="date" class="form-control" id="admin-date-filter">
-                </div>
-                <div class="col-md-2">
-                    <button class="btn btn-secondary w-100" id="admin-date-search-btn"><i class="bi bi-calendar-event"></i>بحث فقط</button>
-                </div>
-                <div class="col-md-2">
-                    <button class="btn btn-success w-100" id="export-excel-btn"><i class="bi bi-file-earmark-excel"></i>استخراج ملف</button>
-                </div>
-                <!-- بحث موعد الصيانة -->
-                <div class="col-md-4 mt-2 mt-md-0">
-                    <div class="input-group">
-                        <input type="date" class="form-control border-primary" id="maintenance-date-filter" style="border-width:2px;">
-                        <button class="btn btn-primary" id="maintenance-date-search-btn" style="min-width:120px;"><i class="bi bi-tools"></i>بحث موعد الصيانة</button>
-                    </div>
-                </div>
-            </div>
-            <div id="admin-tickets-list" class="row"></div>
-        </div>
-
-        <!-- نموذج عميل جديد -->
-        <div id="new-customer-form" class="form-section">
-            <h3 class="mb-4">عميل جديد</h3>
-            <form id="customer-form">
-                <div class="row mb-3">
-                    <div class="col-md-6">
-                        <label for="new-customer-name" class="form-label">اسم العميل</label>
-                        <input type="text" class="form-control" id="new-customer-name" required>
-                    </div>
-                    <div class="col-md-6">
-                        <label for="new-customer-phone" class="form-label">رقم الهاتف الأساسي</label>
-                        <input type="text" class="form-control" id="new-customer-phone" required>
-                    </div>
-                </div>
-
-                <div class="row mb-3">
-                    <div class="col-md-6">
-                        <label for="new-customer-phone2" class="form-label">رقم الهاتف الثانوي (اختياري)</label>
-                        <input type="text" class="form-control" id="new-customer-phone2">
-                    </div>
-                    <div class="col-md-6">
-                        <label for="new-customer-governorate" class="form-label">المحافظة</label>
-                        <select class="form-select" id="new-customer-governorate" required>
-                            <option value="">اختر المحافظة</option>
-                            <!-- سيتم ملؤه ديناميكيًا -->
-                        </select>
-                    </div>
-                </div>
-
-                <div class="row mb-3">
-                    <div class="col-md-6">
-                        <label for="new-customer-region" class="form-label">المنطقة</label>
-                        <input type="text" class="form-control" id="new-customer-region" disabled required>
-                    </div>
-                </div>
-
-                <button type="submit" class="btn btn-primary">حفظ</button>
-                <button type="button" class="btn btn-secondary" id="cancel-new-customer">إلغاء</button>
-            </form>
+        <ul>
+            <li data-section="admin" id="adminBtn" title="لوحة الأدمن">
+                <img src="icon4.png" alt="Admin Icon" style="width:28px;height:32px;vertical-align:middle;border-radius:50%;background:transparent;  width: 50px; height: 40px;" />
+            <li style="padding-top: 7px;"  data-section="creatine" class="active">Creatine</li>
+            <li style="padding-top: 7px;" data-section="gainer">Gainer</li>
+            <li style="padding-top: 7px;" data-section="protein">Protein</li>
+            <li style="padding-top: 7px;" data-section="citrulline">Citrulline</li>
+            <li style="padding-top: 7px;" data-section="accessories">Accessories</li>
+            <li style="padding-top: 7px;" data-section="offers">Offers</li>
+            </li>
+        </ul>
+    </nav>
+    <div id="searchBarContainer" style="display:flex;justify-content:center;align-items:center;margin:8px 0 0 0;gap:12px;">
+        <input id="searchInput" type="text" placeholder=" Search for product...        🔍" 
+            style="width:60%;max-width:400px;padding:10px 16px;font-size:1.2rem;border-radius:8px;border:none;outline:none;box-shadow:0 2px 8px #0003;background:#232323;color:#fff;"/>
+        <button id="cartBtn" style="position:relative;background:none;border:none;cursor:pointer;outline:none;display:flex;align-items:center;">
+            <svg width="36" height="36" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="12" cy="12" r="12" fill="#ffb300"/>
+                <path d="M7 7h10l-1 9H8L7 7z" stroke="#222" stroke-width="2" fill="#fff"/>
+                <circle cx="9.5" cy="18" r="1.5" fill="#222"/>
+                <circle cx="14.5" cy="18" r="1.5" fill="#222"/>
+            </svg>
+            <span id="cartCount" style="position:absolute;top:0;right:0;background:#ff4444;color:#fff;font-size:1rem;font-weight:bold;border-radius:50%;width:22px;height:22px;display:flex;align-items:center;justify-content:center;">0</span>
+        </button>
+    </div>
+    <button id="scrollTopBtn" style="display:none;position:fixed;bottom:32px;right:16px;z-index:9999;background:#ffb300;border:none;border-radius:50%;width:54px;height:54px;box-shadow:0 2px 12px #0007;cursor:pointer;align-items:center;justify-content:center;transition:opacity 0.3s;">
+        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="12" cy="12" r="12" fill="#ffb300"/>
+            <path d="M8 14l4-4 4 4" stroke="#222" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+    </button>
+    <button id="whatsappBtn" style="display:flex;position:fixed;bottom:100px;right:16px;z-index:9999;background:#25d366;border:none;border-radius:50%;width:54px;height:54px;box-shadow:0 2px 12px #0007;cursor:pointer;align-items:center;justify-content:center;transition:opacity 0.3s;">
+        <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="16" cy="16" r="16" fill="#25d366"/>
+            <path d="M23 16.5c0-4.142-3.358-7.5-7.5-7.5s-7.5 3.358-7.5 7.5c0 1.326.347 2.57.95 3.646L8 24l3.972-1.312A7.47 7.47 0 0 0 15.5 24c4.142 0 7.5-3.358 7.5-7.5zm-7.5 6.5c-1.13 0-2.19-.293-3.104-.805l-.221-.13-2.36.78.78-2.36-.13-.221A6.48 6.48 0 0 1 9 16.5c0-3.584 2.916-6.5 6.5-6.5s6.5 2.916 6.5 6.5-2.916 6.5-6.5 6.5zm3.35-4.05c-.184-.092-1.09-.537-1.257-.598-.168-.062-.29-.092-.413.092-.123.184-.474.598-.581.723-.107.123-.215.138-.399.046-.184-.092-.777-.286-1.48-.911-.545-.486-.913-1.086-1.02-1.27-.107-.184-.012-.283.08-.375.082-.081.184-.215.276-.323.092-.107.123-.184.184-.307.062-.123.031-.23-.016-.323-.046-.092-.414-1.07-.567-1.465-.153-.395-.299-.34-.413-.347-.107-.005-.23-.006-.353-.006-.123 0-.323.046-.492.23-.168.184-.638.573-.638 1.398 0 .825.573 1.623.653 1.739.08.115 1.127 1.72 2.73 2.347.382.132.68.211.914.27.384.092.734.079 1.011.048.308-.034.949-.388 1.084-.763.134-.375.134-.696.094-.763-.04-.067-.153-.107-.32-.184z" fill="#fff"/>
+        </svg>
+    </button>
+    <div id="addToCartMsg" class="add-to-cart-msg"></div>
+    <div class="container" id="mainContainer">
+        <!-- المحتوى يتغير هنا -->
+    </div>
+    <div id="adminLoginModal" class="admin-login-modal" style="display:none;">
+        <div class="admin-login-box">
+            <h2>Admin Login</h2>
+            <input type="text" id="adminUsername" placeholder="Username">
+            <input type="password" id="adminPassword" placeholder="Password">
+            <button id="adminLoginBtn">Login</button>
+            <div class="error" id="adminLoginError"></div>
         </div>
     </div>
-
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js"></script>
     <script>
-        // بيانات التطبيق
-        const users = [
-            { username: 'admin', password: '0000', role: 'admin', name: 'مدير النظام' },
-            { username: 'Ahmed', password: '1111', role: 'employee', name: 'أحمد' },
-            { username: 'Adam', password: '2222', role: 'employee', name: 'آدم' }
+        // --- Firebase config ---
+        const firebaseConfig = {
+            apiKey: "AIzaSyBQk84dO9eB39kQ5eQXqO7MbrBKHP1uWyQ",
+            authDomain: "elfanan-supplements.firebaseapp.com",
+            databaseURL: "https://elfanan-supplements-default-rtdb.firebaseio.com",
+            projectId: "elfanan-supplements",
+            storageBucket: "elfanan-supplements.firebasestorage.app",
+            messagingSenderId: "373631110527",
+            appId: "1:373631110527:web:321bf56dead7f4c3df5e4a",
+            measurementId: "G-R3G7ZLEWEK"
+        };
+        firebase.initializeApp(firebaseConfig);
+        if (firebase.analytics) firebase.analytics();
+        const db = firebase.database();
+
+        // --- المنتجات من Firebase ---
+        let products = [];
+        let editingProductIndex = null;
+        const productTypes = [
+            {key: 'creatine', label: 'Creatine'},
+            {key: 'protein', label: 'Protein'},
+            {key: 'gainer', label: 'Gainer'},
+            {key: 'citrulline', label: 'Citrulline'},
+            {key: 'accessories', label: 'Accessories'},
+            {key: 'offers', label: 'Offers'}
         ];
 
-        const governorates = {
-            'القاهرة': ['المعادي', 'المقطم', 'مدينة نصر', 'الزمالك', 'الدقي'],
-            'الجيزة': ['الدقي', 'المهندسين', 'الهرم', 'فيصل', 'العجوزة'],
-            'الإسكندرية': ['سيدي جابر', 'المنتزه', 'العصافرة', 'السيوف', 'المعمورة']
-        };
-
-        const ticketSubtypes = {
-            inquiry: ['استفسار عن 1', 'استفسار عن 2', 'استفسار عن 3'],
-            complaint: ['شكوى عن 1', 'شكوى عن 2', 'شكوى عن 3'],
-            maintenance: ['صيانة 1', 'صيانة 2', 'صيانة 3']
-        };
-
-        let customers = [];
-        let tickets = [];
-        let currentUser = null;
-        let currentCustomer = null;
-
-        // متغير لتخزين التذاكر المعروضة حاليًا
-        let currentlyDisplayedTickets = [];
-
-        // متغير لتخزين نتائج بحث موعد الصيانة
-        let maintenanceDateTickets = [];
-
-        // DOM Elements
-        const loginPage = document.getElementById('login-page');
-        const mainPage = document.getElementById('main-page');
-        const loginForm = document.getElementById('login-form');
-        const logoutBtn = document.getElementById('logout-btn');
-        const employeeDashboard = document.getElementById('employee-dashboard');
-        const adminDashboard = document.getElementById('admin-dashboard');
-        const adminLinkItem = document.getElementById('admin-link-item');
-        const employeeDashboardLink = document.getElementById('employee-dashboard-link');
-        const adminDashboardLink = document.getElementById('admin-dashboard-link');
-        const customerSearch = document.getElementById('customer-search');
-        const searchCustomerBtn = document.getElementById('search-customer-btn');
-        const newCustomerBtn = document.getElementById('new-customer-btn');
-        const customerProfile = document.getElementById('customer-profile');
-        const newTicketForm = document.getElementById('new-ticket-form');
-        const clearTicketFormBtn = document.getElementById('clear-ticket-form');
-        const ticketType = document.getElementById('ticket-type');
-        const ticketSubtypeContainer = document.getElementById('ticket-subtype-container');
-        const ticketSubtype = document.getElementById('ticket-subtype');
-        const maintenanceScheduleContainer = document.getElementById('maintenance-schedule-container');
-        const newCustomerForm = document.getElementById('new-customer-form');
-        const customerForm = document.getElementById('customer-form');
-        const cancelNewCustomerBtn = document.getElementById('cancel-new-customer');
-        const adminSearch = document.getElementById('admin-search');
-        const adminSearchBtn = document.getElementById('admin-search-btn');
-        const adminTicketsList = document.getElementById('admin-tickets-list');
-        const ticketStatusFilter = document.getElementById('ticket-status-filter');
-        const ticketTypeFilter = document.getElementById('ticket-type-filter');
-        const adminDateFilter = document.getElementById('admin-date-filter');
-        const adminDateSearchBtn = document.getElementById('admin-date-search-btn');
-        const exportExcelBtn = document.getElementById('export-excel-btn');
-        const maintenanceDateFilter = document.getElementById('maintenance-date-filter');
-        const maintenanceDateSearchBtn = document.getElementById('maintenance-date-search-btn');
-
-        // أحداث الصفحة
-        document.addEventListener('DOMContentLoaded', function() {
-            // تعبئة محافظات في نموذج العميل الجديد
-            const governorateSelect = document.getElementById('new-customer-governorate');
-            for (const gov in governorates) {
-                const option = document.createElement('option');
-                option.value = gov;
-                option.textContent = gov;
-                governorateSelect.appendChild(option);
-            }
-
-            // إضافة بيانات وهمية للاختبار
-            addSampleData();
-        });
-
-        // تسجيل الدخول
-        loginForm.addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            const username = document.getElementById('username').value;
-            const password = document.getElementById('password').value;
-            
-            const user = users.find(u => u.username === username && u.password === password);
-            
-            if (user) {
-                currentUser = user;
-                loginPage.style.display = 'none';
-                mainPage.style.display = 'block';
-                
-                // تعبئة اسم الموظف في النموذج
-                document.getElementById('employee-name').value = user.name;
-                
-                // إظهار أو إخفاء رابط المدير
-                if (user.role === 'admin') {
-                    adminLinkItem.style.display = 'block';
-                    showAdminDashboard();
+        // جلب المنتجات من قاعدة البيانات وتحديثها تلقائياً
+        function listenToProducts() {
+            db.ref('gymProducts').on('value', snapshot => {
+                const val = snapshot.val() || [];
+                // إذا كانت البيانات ككائن (مفتاح تلقائي)، حولها لمصفوفة
+                if (!Array.isArray(val)) {
+                    products = Object.values(val);
                 } else {
-                    adminLinkItem.style.display = 'none';
-                    showEmployeeDashboard();
+                    products = val;
                 }
-                
-                alert(`مرحباً ${user.name}! تم تسجيل الدخول بنجاح.`);
-            } else {
-                alert('اسم المستخدم أو كلمة المرور غير صحيحة!');
-            }
-        });
-
-        // تسجيل الخروج
-        logoutBtn.addEventListener('click', function() {
-            currentUser = null;
-            mainPage.style.display = 'none';
-            loginPage.style.display = 'block';
-            document.getElementById('username').value = '';
-            document.getElementById('password').value = '';
-            hideCustomerProfile();
-        });
-
-        // التنقل بين لوحات الموظف والمدير
-        employeeDashboardLink.addEventListener('click', function(e) {
-            e.preventDefault();
-            showEmployeeDashboard();
-        });
-
-        adminDashboardLink.addEventListener('click', function(e) {
-            e.preventDefault();
-            showAdminDashboard();
-        });
-
-        function showEmployeeDashboard() {
-            employeeDashboard.classList.add('active-form');
-            adminDashboard.classList.remove('active-form');
-            newCustomerForm.classList.remove('active-form');
-            hideCustomerProfile();
-        }
-
-        function showAdminDashboard() {
-            employeeDashboard.classList.remove('active-form');
-            adminDashboard.classList.add('active-form');
-            newCustomerForm.classList.remove('active-form');
-            hideCustomerProfile();
-            loadAdminTickets();
-        }
-
-        // البحث عن عميل
-        searchCustomerBtn.addEventListener('click', function() {
-            const searchValue = customerSearch.value.trim();
-            if (!searchValue) {
-                alert('الرجاء إدخال رقم الهاتف أو اسم العميل أو رقم التذكرة للبحث');
-                return;
-            }
-            let customer = null;
-            // إذا كان البحث رقم
-            if (!isNaN(searchValue)) {
-                // ابحث برقم الهاتف أو رقم التذكرة
-                customer = customers.find(c => c.phone === searchValue || c.phone2 === searchValue);
-                if (!customer) {
-                    // ابحث برقم التذكرة
-                    const ticket = tickets.find(t => t.id === searchValue);
-                    if (ticket) {
-                        customer = customers.find(c => c.id === ticket.customerId);
-                    }
-                }
-            } else {
-                // ابحث بالاسم
-                customer = customers.find(c => c.name.includes(searchValue));
-            }
-            if (customer) {
-                showCustomerProfile(customer);
-            } else {
-                if (confirm('لا يوجد عميل بهذه البيانات. هل تريد إنشاء حساب جديد؟')) {
-                    showNewCustomerForm(searchValue);
-                }
-            }
-        });
-
-        // عرض بروفيل العميل
-        function showCustomerProfile(customer) {
-            currentCustomer = customer;
-            
-            document.getElementById('customer-name').querySelector('span').textContent = customer.name;
-            document.getElementById('customer-phone').querySelector('span').textContent = customer.phone;
-            document.getElementById('customer-governorate').querySelector('span').textContent = customer.governorate;
-            document.getElementById('customer-region').querySelector('span').textContent = customer.region;
-            document.getElementById('customer-id').value = customer.id;
-            
-            // عرض تذاكر العميل
-            const customerTickets = tickets.filter(t => t.customerId === customer.id);
-            const ticketsContainer = document.getElementById('customer-tickets');
-            ticketsContainer.innerHTML = '';
-            
-            if (customerTickets.length === 0) {
-                ticketsContainer.innerHTML = '<p>لا توجد تذاكر لهذا العميل</p>';
-            } else {
-                customerTickets.forEach(ticket => {
-                    const ticketCard = createTicketCard(ticket, false);
-                    ticketsContainer.appendChild(ticketCard);
-                });
-            }
-            
-            customerProfile.style.display = 'block';
-            setTodayForTicketDate();
-        }
-
-        function hideCustomerProfile() {
-            customerProfile.style.display = 'none';
-            currentCustomer = null;
-            customerSearch.value = '';
-        }
-
-        // إنشاء بطاقة تذكرة
-        function createTicketCard(ticket, isAdmin = false) {
-            const card = document.createElement('div');
-            card.className = `card ticket-card status-${ticket.status}`;
-            
-            // أيقونة تذكرة أعلى البطاقة
-            const icon = document.createElement('span');
-            icon.className = 'ticket-icon';
-            icon.innerHTML = '<i class="bi bi-ticket-perforated"></i>';
-            card.appendChild(icon);
-            
-            const cardBody = document.createElement('div');
-            cardBody.className = 'card-body';
-            
-            const title = document.createElement('h5');
-            title.className = 'card-title';
-            
-            let typeText = '';
-            if (ticket.type === 'inquiry') typeText = 'استفسار';
-            else if (ticket.type === 'complaint') typeText = 'شكوى';
-            else if (ticket.type === 'maintenance') typeText = 'صيانة';
-            
-            title.textContent = `تذكرة #${ticket.id} - ${typeText}`;
-            
-            const subtitle = document.createElement('h6');
-            subtitle.className = 'card-subtitle mb-2 text-muted';
-            subtitle.textContent = `بتاريخ: ${ticket.date}`;
-            
-            const type = document.createElement('p');
-            type.className = 'card-text';
-            type.textContent = `النوع: ${ticket.subtype}`;
-            
-            const desc = document.createElement('div');
-            desc.className = 'card-text';
-            desc.innerHTML = `<div style="border:1px solid #ccc; border-radius:5px; background:#f9f9f9; padding:7px 10px; margin-bottom:7px; font-size:0.97em;">${ticket.description}</div>`;
-            
-            const employee = document.createElement('p');
-            employee.className = 'card-text';
-            employee.textContent = `الموظف: ${ticket.employee}`;
-            
-            const status = document.createElement('p');
-            status.className = 'card-text';
-            
-            let statusText = '';
-            if (ticket.status === 'open') statusText = 'مفتوحة';
-            else if (ticket.status === 'closed') statusText = 'مغلقة';
-            else if (ticket.status === 'pending') statusText = 'قيد الانتظار';
-            
-            status.textContent = `الحالة: ${statusText}`;
-            
-            cardBody.appendChild(title);
-            cardBody.appendChild(subtitle);
-            cardBody.appendChild(type);
-            cardBody.appendChild(desc);
-            cardBody.appendChild(employee);
-            cardBody.appendChild(status);
-            
-            if (ticket.type === 'maintenance' && ticket.schedule) {
-                const schedule = document.createElement('p');
-                schedule.className = 'card-text';
-                
-                // تحويل الوقت إلى صيغة 12 ساعة مع AM/PM
-                const scheduleDate = new Date(ticket.schedule);
-                let hours = scheduleDate.getHours();
-                const ampm = hours >= 12 ? 'PM' : 'AM';
-                hours = hours % 12;
-                hours = hours ? hours : 12; // الساعة 0 تصبح 12
-                const minutes = scheduleDate.getMinutes().toString().padStart(2, '0');
-                
-                schedule.textContent = `موعد الصيانة: ${scheduleDate.toLocaleDateString()} ${hours}:${minutes} ${ampm}`;
-                cardBody.appendChild(schedule);
-            }
-            
-            if (ticket.type === 'complaint' && ticket.adminReply) {
-                const reply = document.createElement('div');
-                reply.className = 'card-text text-primary';
-                reply.innerHTML = `<div style="border:1px solid #007bff; border-radius:5px; background:#eef6ff; padding:7px 10px; margin-bottom:7px; font-size:0.97em;">رد المدير: ${ticket.adminReply}</div>`;
-                cardBody.appendChild(reply);
-            }
-            
-            if (isAdmin && currentUser.role === 'admin') {
-                const statusSelect = document.createElement('select');
-                statusSelect.className = 'form-select mb-3';
-                
-                const options = [
-                    { value: 'open', text: 'مفتوحة' },
-                    { value: 'closed', text: 'مغلقة' },
-                    { value: 'pending', text: 'قيد الانتظار' }
-                ];
-                
-                options.forEach(opt => {
-                    const option = document.createElement('option');
-                    option.value = opt.value;
-                    option.textContent = opt.text;
-                    option.selected = ticket.status === opt.value;
-                    statusSelect.appendChild(option);
-                });
-                
-                statusSelect.addEventListener('change', function() {
-                    updateTicketStatus(ticket.id, this.value);
-                });
-                
-                if (ticket.type === 'complaint' && ticket.status !== 'closed') {
-                    const replyDiv = document.createElement('div');
-                    replyDiv.className = 'mb-3';
-                    
-                    const replyLabel = document.createElement('label');
-                    replyLabel.className = 'form-label';
-                    replyLabel.textContent = 'رد المدير';
-                    
-                    const replyTextarea = document.createElement('textarea');
-                    replyTextarea.className = 'form-control';
-                    replyTextarea.rows = 2;
-                    replyTextarea.placeholder = 'أدخل رد المدير هنا...';
-                    replyTextarea.value = ticket.adminReply || '';
-                    
-                    const replyButton = document.createElement('button');
-                    replyButton.className = 'btn btn-sm btn-primary mt-2';
-                    replyButton.textContent = 'حفظ الرد';
-                    replyButton.addEventListener('click', function() {
-                        updateAdminReply(ticket.id, replyTextarea.value);
-                    });
-                    
-                    replyDiv.appendChild(replyLabel);
-                    replyDiv.appendChild(replyTextarea);
-                    replyDiv.appendChild(replyButton);
-                    cardBody.appendChild(replyDiv);
-                }
-                
-                cardBody.appendChild(statusSelect);
-            }
-            
-            // إضافة بيانات العميل في صفحة المدير فقط (مباشرة بعد رقم التذكرة)
-            if (isAdmin) {
-                const customer = customers.find(c => c.id === ticket.customerId);
-                if (customer) {
-                    const customerInfo = document.createElement('div');
-                    customerInfo.className = 'mb-2';
-                    customerInfo.innerHTML = `
-                        <strong>اسم العميل:</strong> ${customer.name} <br>
-                        <strong>رقم الهاتف:</strong> ${customer.phone} <br>
-                        <strong>المحافظة:</strong> ${customer.governorate} <br>
-                        <strong>المنطقة:</strong> ${customer.region}
-                    `;
-                    cardBody.appendChild(customerInfo);
-                }
-            }
-            
-            card.appendChild(cardBody);
-            
-            // عند النقر على التذكرة في لوحة المدير، عرض بروفيل العميل
-            if (isAdmin) {
-                card.addEventListener('click', function() {
-                    const customer = customers.find(c => c.id === ticket.customerId);
-                    if (customer) {
-                        showCustomerProfile(customer);
-                    }
-                });
-            }
-            
-            return card;
-        }
-
-        // تغيير نوع التذكرة
-        ticketType.addEventListener('change', function() {
-            const type = this.value;
-            
-            ticketSubtypeContainer.style.display = type ? 'block' : 'none';
-            maintenanceScheduleContainer.style.display = type === 'maintenance' ? 'block' : 'none';
-            
-            if (type) {
-                // تعبئة الأنواع الفرعية
-                ticketSubtype.innerHTML = '';
-                ticketSubtypes[type].forEach(subtype => {
-                    const option = document.createElement('option');
-                    option.value = subtype;
-                    option.textContent = subtype;
-                    ticketSubtype.appendChild(option);
-                });
-            }
-        });
-
-        // إضافة تذكرة جديدة
-        newTicketForm.addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            if (!currentCustomer) {
-                alert('الرجاء تحديد عميل أولاً');
-                return;
-            }
-            
-            const type = ticketType.value;
-            const subtype = ticketSubtype.value;
-            const description = document.getElementById('ticket-description').value;
-            const date = document.getElementById('ticket-date').value;
-            const employee = document.getElementById('employee-name').value;
-            const customerId = document.getElementById('customer-id').value;
-            
-            if (!type || !subtype || !description || !date) {
-                alert('الرجاء ملء جميع الحقول المطلوبة');
-                return;
-            }
-            
-            const newTicket = {
-                id: getNextTicketId(),
-                type,
-                subtype,
-                description,
-                date,
-                employee,
-                customerId,
-                status: type === 'inquiry' ? 'closed' : 'open',
-                createdAt: new Date().toISOString()
-            };
-            
-            if (type === 'maintenance') {
-                const schedule = document.getElementById('maintenance-schedule').value;
-                if (!schedule) {
-                    alert('الرجاء تحديد موعد الصيانة');
-                    return;
-                }
-                newTicket.schedule = schedule;
-            }
-            
-            tickets.push(newTicket);
-            alert('تم حفظ التذكرة بنجاح');
-            clearTicketForm();
-            
-            // تحديث عرض التذاكر
-            if (currentCustomer) {
-                showCustomerProfile(currentCustomer);
-            }
-        });
-
-        // تفريغ نموذج التذكرة
-        clearTicketFormBtn.addEventListener('click', clearTicketForm);
-
-        function clearTicketForm() {
-            ticketType.value = '';
-            ticketSubtype.value = '';
-            document.getElementById('ticket-description').value = '';
-            document.getElementById('ticket-date').value = '';
-            document.getElementById('maintenance-schedule').value = '';
-            ticketSubtypeContainer.style.display = 'none';
-            maintenanceScheduleContainer.style.display = 'none';
-        }
-
-        // عرض نموذج عميل جديد
-        newCustomerBtn.addEventListener('click', function() {
-            showNewCustomerForm();
-        });
-
-        function showNewCustomerForm(phone = '') {
-            employeeDashboard.classList.remove('active-form');
-            adminDashboard.classList.remove('active-form');
-            newCustomerForm.classList.add('active-form');
-            hideCustomerProfile();
-            
-            document.getElementById('new-customer-name').value = '';
-            document.getElementById('new-customer-phone').value = phone;
-            document.getElementById('new-customer-phone2').value = '';
-            document.getElementById('new-customer-governorate').value = '';
-            document.getElementById('new-customer-region').value = '';
-            document.getElementById('new-customer-region').disabled = true;
-        }
-
-        // تغيير المحافظة
-        document.getElementById('new-customer-governorate').addEventListener('change', function() {
-            const gov = this.value;
-            const regionInput = document.getElementById('new-customer-region');
-            regionInput.value = '';
-            regionInput.disabled = !gov;
-        });
-
-        // حفظ عميل جديد
-        customerForm.addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            const name = document.getElementById('new-customer-name').value;
-            const phone = document.getElementById('new-customer-phone').value;
-            const phone2 = document.getElementById('new-customer-phone2').value;
-            const governorate = document.getElementById('new-customer-governorate').value;
-            const region = document.getElementById('new-customer-region').value;
-            
-            if (!name || !phone || !governorate || !region) {
-                alert('الرجاء ملء جميع الحقول المطلوبة');
-                return;
-            }
-            
-            // التحقق من عدم وجود عميل بنفس رقم الهاتف
-            const existingCustomer = customers.find(c => c.phone === phone || (phone2 && c.phone2 === phone2));
-            if (existingCustomer) {
-                alert('يوجد بالفعل عميل بهذا الرقم!');
-                return;
-            }
-            
-            const newCustomer = {
-                id: generateId(),
-                name,
-                phone,
-                phone2,
-                governorate,
-                region
-            };
-            
-            customers.push(newCustomer);
-            alert('تم حفظ العميل بنجاح');
-            
-            // تفعيل لوحة الموظف ثم عرض بروفايل العميل الجديد
-            showEmployeeDashboard();
-            showCustomerProfile(newCustomer);
-        });
-
-        // إلغاء إنشاء عميل جديد
-        cancelNewCustomerBtn.addEventListener('click', function() {
-            showEmployeeDashboard();
-        });
-
-        // لوحة المدير - تحميل التذاكر
-        function loadAdminTickets() {
-            const searchValue = adminSearch.value.trim();
-            const statusFilter = ticketStatusFilter.value;
-            const typeFilter = ticketTypeFilter.value;
-            let filteredTickets = [...tickets];
-            // بحث متقدم
-            if (searchValue) {
-                filteredTickets = filteredTickets.filter(t => {
-                    // ابحث برقم التذكرة
-                    if (t.id === searchValue) return true;
-                    // ابحث باسم العميل أو رقم الهاتف
-                    const customer = customers.find(c => c.id === t.customerId);
-                    if (customer) {
-                        if (customer.name.includes(searchValue)) return true;
-                        if (customer.phone === searchValue || customer.phone2 === searchValue) return true;
-                    }
-                    return false;
-                });
-            }
-            if (statusFilter !== 'all') {
-                filteredTickets = filteredTickets.filter(t => t.status === statusFilter);
-            }
-            if (typeFilter !== 'all') {
-                filteredTickets = filteredTickets.filter(t => t.type === typeFilter);
-            }
-            // ترتيب التذاكر من الأحدث إلى الأقدم
-            filteredTickets.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-            adminTicketsList.innerHTML = '';
-            if (filteredTickets.length === 0) {
-                adminTicketsList.innerHTML = '<p>لا توجد تذاكر تطابق معايير البحث</p>';
-            } else {
-                filteredTickets.forEach(ticket => {
-                    const col = document.createElement('div');
-                    col.className = 'col-md-6';
-                    const ticketCard = createTicketCard(ticket, true);
-                    col.appendChild(ticketCard);
-                    adminTicketsList.appendChild(col);
-                });
-            }
-        }
-
-        // البحث في لوحة المدير
-        adminSearchBtn.addEventListener('click', function() {
-            loadAdminTickets();
-        });
-
-        // تصفية التذاكر في لوحة المدير
-        ticketStatusFilter.addEventListener('change', loadAdminTickets);
-        ticketTypeFilter.addEventListener('change', loadAdminTickets);
-
-        // تحديث حالة التذكرة
-        function updateTicketStatus(ticketId, newStatus) {
-            const ticketIndex = tickets.findIndex(t => t.id === ticketId);
-            
-            if (ticketIndex !== -1) {
-                tickets[ticketIndex].status = newStatus;
-                alert('تم تحديث حالة التذكرة');
-                loadAdminTickets();
-                
-                // إذا كان العميل معروضًا، قم بتحديث عرض التذاكر
-                if (currentCustomer) {
-                    showCustomerProfile(currentCustomer);
-                }
-            }
-        }
-
-        // تحديث رد المدير على الشكوى
-        function updateAdminReply(ticketId, reply) {
-            const ticketIndex = tickets.findIndex(t => t.id === ticketId);
-            
-            if (ticketIndex !== -1) {
-                tickets[ticketIndex].adminReply = reply;
-                alert('تم حفظ رد المدير');
-                loadAdminTickets();
-                
-                // إذا كان العميل معروضًا، قم بتحديث عرض التذاكر
-                if (currentCustomer) {
-                    showCustomerProfile(currentCustomer);
-                }
-            }
-        }
-
-        // وظائف مساعدة
-        function generateId() {
-            return Math.floor(Math.random() * 1000000).toString();
-        }
-
-        function addSampleData() {
-            // عملاء وهميين
-            customers = [
-                
-            ];
-            
-            // حذف التذاكر الوهمية
-            tickets = [];
-        }
-
-        // عند عرض بروفايل العميل أو فتح نموذج التذكرة الجديدة، يتم تعيين تاريخ اليوم تلقائيًا
-        function setTodayForTicketDate() {
-            const today = new Date();
-            const yyyy = today.getFullYear();
-            const mm = String(today.getMonth() + 1).padStart(2, '0');
-            const dd = String(today.getDate()).padStart(2, '0');
-            document.getElementById('ticket-date').value = `${yyyy}-${mm}-${dd}`;
-        }
-
-        // منطق توليد رقم التذكرة يبدأ من 1000 ويزيد واحد مع كل تذكرة جديدة
-        function getNextTicketId() {
-            if (tickets.length === 0) return '1000';
-            const maxId = Math.max(...tickets.map(t => parseInt(t.id, 10)));
-            return (maxId + 1).toString();
-        }
-
-        // عند البحث بالتاريخ أو أي بحث آخر، احفظ النتائج في currentlyDisplayedTickets
-        adminDateSearchBtn.addEventListener('click', function() {
-            const date = adminDateFilter.value;
-            if (!date) {
-                alert('يرجى اختيار التاريخ أولاً');
-                return;
-            }
-            currentlyDisplayedTickets = tickets.filter(t => t.date === date);
-            loadAdminTickets(currentlyDisplayedTickets);
-        });
-
-        // عند البحث بالنص أو الفلاتر الأخرى، احفظ النتائج أيضًا
-        adminSearchBtn.addEventListener('click', function() {
-            // استخدم نفس منطق loadAdminTickets
-            const searchValue = adminSearch.value.trim();
-            const statusFilter = ticketStatusFilter.value;
-            const typeFilter = ticketTypeFilter.value;
-            let filteredTickets = [...tickets];
-            if (searchValue) {
-                filteredTickets = filteredTickets.filter(t => {
-                    if (t.id === searchValue) return true;
-                    const customer = customers.find(c => c.id === t.customerId);
-                    if (customer) {
-                        if (customer.name.includes(searchValue)) return true;
-                        if (customer.phone === searchValue || customer.phone2 === searchValue) return true;
-                    }
-                    return false;
-                });
-            }
-            if (statusFilter !== 'all') {
-                filteredTickets = filteredTickets.filter(t => t.status === statusFilter);
-            }
-            if (typeFilter !== 'all') {
-                filteredTickets = filteredTickets.filter(t => t.type === typeFilter);
-            }
-            filteredTickets.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-            currentlyDisplayedTickets = filteredTickets;
-            loadAdminTickets(filteredTickets);
-        });
-        ticketStatusFilter.addEventListener('change', function() {
-            adminSearchBtn.click();
-        });
-        ticketTypeFilter.addEventListener('change', function() {
-            adminSearchBtn.click();
-        });
-
-        // عدل دالة loadAdminTickets لتحديث currentlyDisplayedTickets دائمًا
-        function loadAdminTickets(customTickets) {
-            const searchValue = adminSearch.value.trim();
-            const statusFilter = ticketStatusFilter.value;
-            const typeFilter = ticketTypeFilter.value;
-            let filteredTickets = customTickets ? [...customTickets] : [...tickets];
-            if (searchValue) {
-                filteredTickets = filteredTickets.filter(t => {
-                    if (t.id === searchValue) return true;
-                    const customer = customers.find(c => c.id === t.customerId);
-                    if (customer) {
-                        if (customer.name.includes(searchValue)) return true;
-                        if (customer.phone === searchValue || customer.phone2 === searchValue) return true;
-                    }
-                    return false;
-                });
-            }
-            if (statusFilter !== 'all') {
-                filteredTickets = filteredTickets.filter(t => t.status === statusFilter);
-            }
-            if (typeFilter !== 'all') {
-                filteredTickets = filteredTickets.filter(t => t.type === typeFilter);
-            }
-            filteredTickets.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-            currentlyDisplayedTickets = filteredTickets;
-            adminTicketsList.innerHTML = '';
-            if (filteredTickets.length === 0) {
-                adminTicketsList.innerHTML = '<p>لا توجد تذاكر تطابق معايير البحث</p>';
-            } else {
-                filteredTickets.forEach(ticket => {
-                    const col = document.createElement('div');
-                    col.className = 'col-md-6';
-                    const ticketCard = createTicketCard(ticket, true);
-                    col.appendChild(ticketCard);
-                    adminTicketsList.appendChild(col);
-                });
-            }
-        }
-
-        // زر استخراج ملف إكسل يصدر التذاكر المعروضة فقط
-        exportExcelBtn.addEventListener('click', function() {
-            const exportTickets = currentlyDisplayedTickets.length > 0 ? currentlyDisplayedTickets : tickets;
-            if (exportTickets.length === 0) {
-                alert('لا توجد تذاكر لاستخراجها');
-                return;
-            }
-            const data = exportTickets.map(t => {
-                const customer = customers.find(c => c.id === t.customerId) || {};
-                return {
-                    'رقم التذكرة': t.id,
-                    'نوع التذكرة': t.type === 'inquiry' ? 'استفسار' : t.type === 'complaint' ? 'شكوى' : 'صيانة',
-                    'النوع الفرعي': t.subtype,
-                    'الوصف': t.description,
-                    'تاريخ التذكرة': t.date,
-                    'الموظف': t.employee,
-                    'الحالة': t.status === 'open' ? 'مفتوحة' : t.status === 'closed' ? 'مغلقة' : 'قيد الانتظار',
-                    'اسم العميل': customer.name || '',
-                    'رقم الهاتف': customer.phone || '',
-                    'المحافظة': customer.governorate || '',
-                    'المنطقة': customer.region || '',
-                    'رد المدير': t.adminReply || '',
-                    'موعد الصيانة': t.type === 'maintenance' && t.schedule ? t.schedule.replace('T', ' ') : ''
-                };
+                // إعادة عرض القسم الحالي
+                const activeSection = document.querySelector('.navbar li.active')?.getAttribute('data-section') || 'creatine';
+                renderProductsSection(activeSection);
+                // إذا كنا في لوحة الأدمن، حدث القائمة
+                if (document.getElementById('adminProductsList')) renderAdminProductsList();
             });
-            const ws = XLSX.utils.json_to_sheet(data);
-            const wb = XLSX.utils.book_new();
-            XLSX.utils.book_append_sheet(wb, ws, 'التذاكر');
-            // تحديد اسم الملف بناءً على تاريخ البحث
-            let filename = 'tickets.xlsx';
-            const dateVal = adminDateFilter.value;
-            if (dateVal) {
-                filename = `tickets_${dateVal}.xlsx`;
-            }
-            XLSX.writeFile(wb, filename);
-        });
+        }
+        listenToProducts();
 
-        // بحث تذاكر الصيانة حسب الموعد
-        maintenanceDateSearchBtn.addEventListener('click', function() {
-            const date = maintenanceDateFilter.value;
-            if (!date) {
-                alert('يرجى اختيار تاريخ موعد الصيانة أولاً');
+        // حفظ المنتجات في قاعدة البيانات
+        function saveProductsToDB() {
+            db.ref('gymProducts').set(products);
+        }
+
+        // --- سلايدر الصور وتكبيرها ---
+        function showImageModal(src) {
+            let modal = document.createElement('div');
+            modal.style.position = 'fixed';
+            modal.style.top = 0;
+            modal.style.left = 0;
+            modal.style.right = 0;
+            modal.style.bottom = 0;
+            modal.style.background = 'rgba(0,0,0,0.85)';
+            modal.style.display = 'flex';
+            modal.style.alignItems = 'center';
+            modal.style.justifyContent = 'center';
+            modal.style.zIndex = 2000;
+            modal.innerHTML = `<img src='${src}' style='max-width:90vw;max-height:90vh;border-radius:12px;border:4px solid #ffb300;'>`;
+            modal.onclick = () => document.body.removeChild(modal);
+            document.body.appendChild(modal);
+        }
+        // --- حساب نسبة الخصم ---
+        function getDiscountPercent(before, after) {
+            before = parseFloat(before); after = parseFloat(after);
+            if(!before || !after || after >= before) return '';
+            return Math.round(100 * (before - after) / before);
+        }
+        // تحديث التخزين المحلي
+        // لم يعد هناك حاجة لـ localStorage، سنستخدم saveProductsToDB بدلاً منها
+        // عرض المنتجات حسب النوع
+        function renderProductsSection(typeKey) {
+            const container = document.getElementById('mainContainer');
+            const type = productTypes.find(t => t.key === typeKey);
+            // المنتجات غير المخفية فقط + البحث
+            const searchTerm = (window.currentSearchTerm || '').toLowerCase();
+            const filtered = products.filter(p => 
+                p.type === typeKey && 
+                !p.hidden &&
+                (
+                    !searchTerm ||
+                    (p.name && p.name.toLowerCase().includes(searchTerm)) ||
+                    (p.desc && p.desc.toLowerCase().includes(searchTerm))
+                )
+            );
+            let html = `<div class='section-title'>${type ? type.label : ''}</div>`;
+            if(filtered.length === 0) {
+                html += `<div style='text-align:center;'>No products in this section yet.</div>`;
+            } else {
+                html += `<div class='products-grid'>`;
+                filtered.forEach((prod, idx) => {
+                    const fadeDelay = idx * 60; // 60ms لكل بطاقة
+                    // سلايدر صور
+                    let slider = '';
+                    if(prod.images && prod.images.length > 1) {
+                        slider = `
+                        <div class='img-slider' style='position:relative;'>
+                            <img src='${prod.images[0]}' class='slider-img' style='cursor:pointer;' onclick='showImageModal("${prod.images[0]}")' data-slider-idx='0' data-prod-idx='${idx}'>
+                            <button class='slider-btn left' onclick='event.stopPropagation();window.changeSlide(this,${idx},-1)' style='position:absolute;left:2px;top:50%;transform:translateY(-50%);background:#222a;padding:2px 8px;border:none;color:#ffb300;font-size:1.2rem;cursor:pointer;border-radius:4px;'>‹</button>
+                            <button class='slider-btn right' onclick='event.stopPropagation();window.changeSlide(this,${idx},1)' style='position:absolute;right:2px;top:50%;transform:translateY(-50%);background:#222a;padding:2px 8px;border:none;color:#ffb300;font-size:1.2rem;cursor:pointer;border-radius:4px;'>›</button>
+                        </div>`;
+                    } else {
+                        slider = `<img src='${prod.images[0] || ''}' style='cursor:pointer;' onclick='showImageModal("${prod.images[0]}")'>`;
+                    }
+                    // نسبة الخصم
+                    let discount = getDiscountPercent(prod.priceBefore, prod.priceAfter);
+                    let discountHtml = discount ? `<span style='background:#ff4444;color:#fff;padding:2px 8px;border-radius:6px;font-size:1rem;position:absolute;left:10px;top:10px;'>${discount}% OFF</span>` : '';
+                    html += `
+                    <div class='product-card' style='overflow:visible; --fade-delay:${fadeDelay}ms;'>
+                        <div style='position:relative;'>
+                            ${slider}
+                            ${discountHtml}
+                        </div>
+                        <div class='product-title'>${prod.name}</div>
+                        <div class='product-desc'>${prod.desc}</div>
+                        <div class='product-type'>${type.label}</div>
+                        <div class='product-prices'>
+                            <del>${prod.priceBefore} L.E</del> <span>${prod.priceAfter} L.E</span>
+                        </div>
+                        <button class='add-to-cart-btn' onclick='addToCart(${JSON.stringify(prod)})' style='background:#25d366;color:#fff;font-weight:bold;padding:8px 0;border-radius:6px;width:100%;margin-top:8px;font-size:1.1rem;cursor:pointer;border:none;'>إضافة إلى السلة</button>
+                    </div>
+                    `;
+                });
+                html += `</div>`;
+            }
+            container.innerHTML = html;
+        }
+        // --- سلايدر الصور ---
+        window.changeSlide = function(btn, filteredIdx, dir) {
+            // ابحث عن كل المنتجات المعروضة حاليًا
+            const section = document.querySelector('.navbar li.active').getAttribute('data-section');
+            const searchTerm = (window.currentSearchTerm || '').toLowerCase();
+            const filtered = products.filter(p => 
+                p.type === section && 
+                !p.hidden &&
+                (
+                    !searchTerm ||
+                    (p.name && p.name.toLowerCase().includes(searchTerm)) ||
+                    (p.desc && p.desc.toLowerCase().includes(searchTerm))
+                )
+            );
+            const prod = filtered[filteredIdx];
+            let img = btn.parentElement.querySelector('.slider-img');
+            let current = parseInt(img.getAttribute('data-slider-idx')) || 0;
+            current = (current + dir + prod.images.length) % prod.images.length;
+            img.src = prod.images[current];
+            img.setAttribute('onclick', `showImageModal("${prod.images[current]}")`);
+            img.setAttribute('data-slider-idx', current);
+        }
+        window.showImageModal = showImageModal;
+        // نافذة تسجيل دخول الأدمن
+        function showAdminLogin() {
+            document.getElementById('adminLoginModal').style.display = 'flex';
+            document.getElementById('adminUsername').value = '';
+            document.getElementById('adminPassword').value = '';
+            document.getElementById('adminLoginError').innerText = '';
+            document.querySelector('.admin-login-box h2').innerText = 'Admin Login';
+            document.getElementById('adminUsername').placeholder = 'Username';
+            document.getElementById('adminPassword').placeholder = 'Password';
+            document.getElementById('adminLoginBtn').innerText = 'Login';
+        }
+        function hideAdminLogin() {
+            document.getElementById('adminLoginModal').style.display = 'none';
+        }
+        document.getElementById('adminBtn').onclick = showAdminLogin;
+        document.getElementById('adminLoginBtn').onclick = function() {
+            const user = document.getElementById('adminUsername').value.trim();
+            const pass = document.getElementById('adminPassword').value.trim();
+            if(user === 'ahmed' && pass === '0000') {
+                hideAdminLogin();
+                renderAdminPanel();
+            } else {
+                document.getElementById('adminLoginError').innerText = 'Invalid login data';
+            }
+        };
+        // اغلاق النافذة عند الضغط خارجها
+        document.getElementById('adminLoginModal').onclick = function(e) {
+            if(e.target === this) hideAdminLogin();
+        };
+
+        // لوحة الأدمن
+        function renderAdminPanel() {
+            const container = document.getElementById('mainContainer');
+            container.style.maxWidth = '';
+            container.style.width = '';
+            container.style.minWidth = '';
+            let html = `<div class='admin-panel'>
+                <h2>Admin Panel</h2>
+                <button class='add-product-btn' onclick='showProductForm()'>+ Add New Product</button>
+                <button class='add-product-btn' style='background:#25d366;margin-right:10px;' onclick='renderOrdersList()'>عرض الطلبات</button>
+                <div id='productFormContainer'></div>
+                <div class='products-list' id='adminProductsList'></div>
+            </div>`;
+            container.innerHTML = html;
+            renderAdminProductsList();
+        }
+
+        // نموذج إضافة/تعديل منتج
+        function showProductForm(editIndex = null) {
+            editingProductIndex = editIndex;
+            let prod = {name:'', desc:'', images:[], priceBefore:'', priceAfter:'', type:productTypes[0].key};
+            if(editIndex !== null) prod = products[editIndex];
+            // متغير للاحتفاظ بكل الصور الحالية والجديدة
+            let currentImages = prod.images ? [...prod.images] : [];
+            let html = `<form class='product-form' id='productForm'>
+                <label>Product Name</label>
+                <input type='text' name='name' value='${prod.name || ''}' required>
+                <label>Description</label>
+                <textarea name='desc' rows='2' required>${prod.desc || ''}</textarea>
+                <label>Product Images</label>
+                <input type='file' name='images' accept='image/*' multiple ${editIndex!==null?'':'required'}>
+                <div id='previewImages' style='display:flex;gap:8px;margin-bottom:8px;'></div>
+                <label>Price Before Discount</label>
+                <input type='number' name='priceBefore' value='${prod.priceBefore || ''}' required>
+                <label>Price After Discount</label>
+                <input type='number' name='priceAfter' value='${prod.priceAfter || ''}' required>
+                <label>Product Type</label>
+                <select name='type'>
+                    ${productTypes.map(t=>`<option value='${t.key}' ${prod.type===t.key?'selected':''}>${t.label}</option>`).join('')}
+                </select>
+                <button type='submit'>${editIndex!==null?'Edit Product':'Add Product'}</button>
+                <button type='button' onclick='hideProductForm()' style='margin-right:10px;background:#333;color:#fff;'>Cancel</button>
+            </form>`;
+            document.getElementById('productFormContainer').innerHTML = html;
+            // عرض الصور الحالية عند التعديل
+            if(currentImages.length) {
+                showPreviewImages(currentImages);
+            }
+            // معاينة الصور الجديدة وإضافتها للقديمة
+            document.querySelector('#productForm input[name="images"]').onchange = function(e) {
+                const files = Array.from(e.target.files);
+                if(files.length) {
+                    const readers = files.map(file => {
+                        return new Promise(res => {
+                            const reader = new FileReader();
+                            reader.onload = ev => res(ev.target.result);
+                            reader.readAsDataURL(file);
+                        });
+                    });
+                    Promise.all(readers).then(imgs => {
+                        currentImages = currentImages.concat(imgs);
+                        showPreviewImages(currentImages);
+                    });
+                }
+            };
+            // معالجة الإرسال
+            document.getElementById('productForm').onsubmit = function(e) {
+                e.preventDefault();
+                const fd = new FormData(this);
+                let newProd = {
+                    name: fd.get('name'),
+                    desc: fd.get('desc'),
+                    images: currentImages,
+                    priceBefore: fd.get('priceBefore'),
+                    priceAfter: fd.get('priceAfter'),
+                    type: fd.get('type')
+                };
+                saveProductData(newProd);
+            };
+        }
+        function showPreviewImages(imgs) {
+            const preview = document.getElementById('previewImages');
+            preview.innerHTML = '';
+            imgs.forEach(src => {
+                const img = document.createElement('img');
+                img.src = src;
+                img.style.width = '50px';
+                img.style.height = '50px';
+                img.style.objectFit = 'cover';
+                img.style.borderRadius = '5px';
+                img.style.border = '1px solid #ffb300';
+                preview.appendChild(img);
+            });
+        }
+        function hideProductForm() {
+            document.getElementById('productFormContainer').innerHTML = '';
+        }
+        function saveProductData(prod) {
+            if(editingProductIndex !== null) {
+                products[editingProductIndex] = prod;
+                editingProductIndex = null;
+            } else {
+                products.push(prod);
+            }
+            saveProductsToDB();
+            hideProductForm();
+            renderAdminProductsList();
+        }
+        // عرض المنتجات في لوحة الأدمن
+        function renderAdminProductsList() {
+            const list = document.getElementById('adminProductsList');
+            if(!products.length) {
+                list.innerHTML = '<div style="text-align:center;">No products yet.</div>';
                 return;
             }
-            // ابحث فقط في تذاكر الصيانة التي لها موعد
-            maintenanceDateTickets = tickets.filter(t => t.type === 'maintenance' && t.schedule && t.schedule.startsWith(date));
-            currentlyDisplayedTickets = maintenanceDateTickets;
-            loadAdminTickets(maintenanceDateTickets);
+            let html = '';
+            products.forEach((prod, i) => {
+                const type = productTypes.find(t=>t.key===prod.type);
+                let hideBtn = prod.hidden 
+                    ? `<button title='إظهار المنتج' onclick='toggleHideProduct(${i})'>
+                        <svg width='24' height='24' viewBox='0 0 24 24' fill='none' xmlns='http://www.w3.org/2000/svg'><path d='M1 12C2.73 7.61 7.09 4.5 12 4.5C16.91 4.5 21.27 7.61 23 12C21.27 16.39 16.91 19.5 12 19.5C7.09 19.5 2.73 16.39 1 12Z' stroke='#ffb300' stroke-width='2'/><circle cx='12' cy='12' r='3.5' stroke='#ffb300' stroke-width='2'/></svg>
+                    </button>`
+                    : `<button title='إخفاء المنتج' onclick='toggleHideProduct(${i})'>
+                        <svg width='24' height='24' viewBox='0 0 24 24' fill='none' xmlns='http://www.w3.org/2000/svg'><path d='M17.94 17.94C16.13 19.24 14.13 20 12 20C7.09 20 2.73 16.39 1 12C1.73 10.19 2.91 8.61 4.44 7.36M9.9 5.08C10.59 4.86 11.29 4.73 12 4.73C16.91 4.73 21.27 8.34 23 13C22.27 14.81 21.09 16.39 19.56 17.64M1 1L23 23' stroke='#ffb300' stroke-width='2'/><circle cx='12' cy='12' r='3.5' stroke='#ffb300' stroke-width='2'/></svg>
+                    </button>`;
+                html += `<div class='product-card'>
+                    <img src="${prod.images[0] || ''}" alt="صورة المنتج" style="cursor:pointer;" onclick="showImageModal('${prod.images[0]}')">
+                    <div class='product-info'>
+                        <div class='product-title'>${prod.name}</div>
+                        <div class='product-desc'>${prod.desc}</div>
+                        <div class='product-type'>${type ? type.label : ''}</div>
+                        <div class='product-prices'><del>${prod.priceBefore} L.E</del> <span>${prod.priceAfter} L.E</span></div>
+                        <div class='product-actions'>
+                            <button title='تعديل المنتج' onclick='editProduct(${i})'>
+                                <svg width='22' height='22' viewBox='0 0 24 24' fill='none' xmlns='http://www.w3.org/2000/svg'><path d='M4 21H20' stroke='#ffb300' stroke-width='2'/><path d='M18.5 2.5C18.8978 2.10218 19.4374 1.87868 20 1.87868C20.5626 1.87868 21.1022 2.10218 21.5 2.5C21.8978 2.89782 22.1213 3.43739 22.1213 4C22.1213 4.56261 21.8978 5.10218 21.5 5.5L7 20L2 21L3 16L18.5 2.5Z' stroke='#ffb300' stroke-width='2'/></svg>
+                            </button>
+                            <button title='حذف المنتج' onclick='deleteProduct(${i})'>
+                                <svg width='22' height='22' viewBox='0 0 24 24' fill='none' xmlns='http://www.w3.org/2000/svg'><path d='M3 6H5H21' stroke='#ffb300' stroke-width='2'/><path d='M8 6V4C8 2.89543 8.89543 2 10 2H14C15.1046 2 16 2.89543 16 4V6M19 6V20C19 21.1046 18.1046 22 17 22H7C5.89543 22 5 21.1046 5 20V6M10 11V17M14 11V17' stroke='#ffb300' stroke-width='2'/></svg>
+                            </button>
+                            ${hideBtn}
+                        </div>
+                    </div>
+                </div>`;
+            });
+            list.innerHTML = html;
+        }
+        // زر إخفاء/إظهار المنتج
+        window.toggleHideProduct = function(i) {
+            products[i].hidden = !products[i].hidden;
+            saveProductsToDB();
+            renderAdminProductsList();
+        }
+        // تعديل منتج
+        window.editProduct = function(i) {
+            showProductForm(i);
+        }
+        // حذف منتج
+        window.deleteProduct = function(i) {
+            if(confirm('هل أنت متأكد من حذف المنتج؟')) {
+                products.splice(i,1);
+                saveProductsToDB();
+                renderAdminProductsList();
+            }
+        }
+        // ربط أقسام الناب بار
+        document.querySelectorAll('.navbar li[data-section]').forEach(li => {
+            li.onclick = function() {
+                document.querySelectorAll('.navbar li').forEach(l=>l.classList.remove('active'));
+                this.classList.add('active');
+                // امسح البحث عند تغيير القسم
+                document.getElementById('searchInput').value = '';
+                window.currentSearchTerm = '';
+                const section = this.getAttribute('data-section');
+                if(section === 'admin') {
+                    showAdminLogin();
+                } else {
+                    renderProductsSection(section);
+                }
+            }
         });
+        // عرض قسم الكرياتين افتراضيا
+        renderProductsSection('creatine');
+        // زر العودة للأعلى
+        const scrollTopBtn = document.getElementById('scrollTopBtn');
+        window.addEventListener('scroll', function() {
+            const navbar = document.querySelector('.navbar');
+            if(window.scrollY > navbar.offsetHeight + 30) {
+                scrollTopBtn.style.display = 'flex';
+                scrollTopBtn.style.opacity = '1';
+            } else {
+                scrollTopBtn.style.opacity = '0';
+                setTimeout(()=>{scrollTopBtn.style.display = 'none';}, 300);
+            }
+        });
+        scrollTopBtn.onclick = function() {
+            window.scrollTo({top:0, behavior:'smooth'});
+        }
+        // البحث المباشر
+        window.currentSearchTerm = '';
+        const searchInput = document.getElementById('searchInput');
+        if (searchInput) {
+            searchInput.addEventListener('input', function() {
+                window.currentSearchTerm = this.value;
+                // ابحث عن القسم الحالي
+                const activeSection = document.querySelector('.navbar li.active')?.getAttribute('data-section') || 'creatine';
+                renderProductsSection(activeSection);
+            });
+        }
+        // زر واتساب العائم
+        const whatsappBtn = document.getElementById('whatsappBtn');
+        if (whatsappBtn) {
+            whatsappBtn.onclick = function() {
+                window.open('https://wa.me/201159768514', '_blank');
+            };
+        }
+    </script>
+    <!-- Splash Screen Animation -->
+    <script>
+        window.addEventListener('DOMContentLoaded', function() {
+            const splash = document.getElementById('splashScreen');
+            const logo = document.getElementById('splashLogo');
+            if (splash && logo) {
+                // Step 1: Shake
+                logo.style.animation = 'shake 0.7s cubic-bezier(.36,.07,.19,.97) both';
+                setTimeout(() => {
+                    // Step 2: Drop Down
+                    logo.style.animation = 'dropDown 0.9s cubic-bezier(.36,.07,.19,.97) forwards';
+                    setTimeout(() => {
+                        // Step 3: Hide splash and show page
+                        splash.style.opacity = '0';
+                        setTimeout(() => {
+                            splash.style.display = 'none';
+                        }, 400);
+                    }, 900);
+                }, 700);
+            }
+        });
+    </script>
+    <script>
+        // --- منطق السلة ---
+        let cart = [];
+        function updateCartCount() {
+            document.getElementById('cartCount').innerText = cart.reduce((sum, item) => sum + item.qty, 0);
+        }
+        function addToCart(prod) {
+            // ابحث إذا المنتج موجود بالفعل
+            let idx = cart.findIndex(item => item.name === prod.name && item.type === prod.type);
+            if(idx > -1) {
+                cart[idx].qty += 1;
+            } else {
+                cart.push({ ...prod, qty: 1 });
+            }
+            updateCartCount();
+            // اهتزاز السلة
+            const cartBtn = document.getElementById('cartBtn');
+            if(cartBtn) {
+                cartBtn.classList.add('shake-cart');
+                setTimeout(()=>cartBtn.classList.remove('shake-cart'), 600);
+            }
+            // رسالة عائمة
+            showAddToCartMessage(prod.name);
+        }
+        // عرض صفحة السلة
+        function renderCartPage() {
+            const container = document.getElementById('mainContainer');
+            if(cart.length === 0) {
+                container.innerHTML = `<div class='section-title'>سلة المشتريات</div><div style='text-align:center;'>السلة فارغة.</div>`;
+                return;
+            }
+            let html = `<div class='section-title'>سلة المشتريات</div><div class='products-list'>`;
+            cart.forEach((item, i) => {
+                html += `<div class='product-card' style='flex-direction:row;align-items:center;'>
+                    <img src='${item.images[0] || ''}' style='width:80px;height:80px;object-fit:cover;border-radius:8px;margin-left:12px;'>
+                    <div class='product-info' style='flex:1;'>
+                        <div class='product-title'>${item.name}</div>
+                        <div class='product-desc'>${item.desc}</div>
+                        <div class='product-type'>${item.type}</div>
+                        <div class='product-prices'><span>${item.priceAfter} L.E</span></div>
+                    </div>
+                    <div style='display:flex;flex-direction:column;align-items:center;gap:6px;'>
+                        <button onclick='changeCartQty(${i},1)' style='background:#ffb300;color:#222;border:none;border-radius:50%;width:32px;height:32px;font-size:1.3rem;font-weight:bold;cursor:pointer;'>+</button>
+                        <span style='font-size:1.2rem;font-weight:bold;'>${item.qty}</span>
+                        <button onclick='changeCartQty(${i},-1)' style='background:#ff4444;color:#fff;border:none;border-radius:50%;width:32px;height:32px;font-size:1.3rem;font-weight:bold;cursor:pointer;'>-</button>
+                    </div>
+                </div>`;
+            });
+            html += `</div>`;
+            // إجمالي السعر
+            let total = cart.reduce((sum, item) => sum + (parseFloat(item.priceAfter) * item.qty), 0);
+            html += `<div style='text-align:center;font-size:1.3rem;margin:18px 0;'>إجمالي السعر: <span style='color:#ffb300;font-weight:bold;'>${total} L.E</span></div>`;
+            html += `<div style='text-align:center;'><button onclick='showOrderForm()' style='background:#25d366;color:#fff;font-weight:bold;padding:12px 32px;border-radius:8px;font-size:1.2rem;cursor:pointer;border:none;'>تأكيد الطلب</button></div>`;
+            container.innerHTML = html;
+        }
+        function changeCartQty(idx, delta) {
+            cart[idx].qty += delta;
+            if(cart[idx].qty <= 0) cart.splice(idx,1);
+            updateCartCount();
+            renderCartPage();
+        }
+        // زر السلة
+        document.getElementById('cartBtn').onclick = renderCartPage;
+        // تحديث العداد عند التحميل
+        updateCartCount();
+        // --- فورم الطلب ---
+        function showOrderForm() {
+            const container = document.getElementById('mainContainer');
+            let html = `<div class='section-title'>تأكيد الطلب</div>
+                <form id='orderForm' style='max-width:400px;margin:0 auto;display:flex;flex-direction:column;gap:12px;'>
+                    <input type='text' name='name' placeholder='الاسم بالكامل' required style='padding:10px;border-radius:6px;border:none;font-size:1.1rem;'>
+                    <input type='text' id='whatsappInput' name='whatsapp' placeholder='رقم الواتساب' required maxlength='11' pattern='[0-9]{11}' style='padding:10px;border-radius:6px;border:none;font-size:1.1rem;' autocomplete='off'>
+                    <div id='whatsappError' style='color:#ff4444;font-size:1rem;display:none;'></div>
+                    <textarea name='address' placeholder='العنوان بالتفصيل' required style='padding:10px;border-radius:6px;border:none;font-size:1.1rem;min-height:60px;'></textarea>
+                    <button type='submit' style='background:#ffb300;color:#222;font-weight:bold;padding:12px 0;border-radius:8px;font-size:1.2rem;cursor:pointer;border:none;'>إرسال الطلب</button>
+                </form>`;
+            container.innerHTML = html;
+            // تحقق مباشر عند الكتابة
+            const whatsappInput = document.getElementById('whatsappInput');
+            const whatsappError = document.getElementById('whatsappError');
+            whatsappInput.addEventListener('input', function(e) {
+                // اسمح فقط بالأرقام الإنجليزية
+                this.value = this.value.replace(/[^0-9]/g, '');
+                if(this.value.length > 11) this.value = this.value.slice(0,11);
+                if(this.value.length === 11) {
+                    whatsappError.style.display = 'none';
+                }
+            });
+            document.getElementById('orderForm').onsubmit = function(e) {
+                e.preventDefault();
+                // تحقق من رقم الواتساب
+                const val = whatsappInput.value;
+                if(!/^\d{11}$/.test(val)) {
+                    whatsappError.innerText = 'رقم الواتساب يجب أن يكون 11 رقمًا (أرقام إنجليزية فقط)';
+                    whatsappError.style.display = 'block';
+                    whatsappInput.focus();
+                    return;
+                } else {
+                    whatsappError.style.display = 'none';
+                }
+                const fd = new FormData(this);
+                const order = {
+                    name: fd.get('name'),
+                    whatsapp: fd.get('whatsapp'),
+                    address: fd.get('address'),
+                    items: cart.map(item => ({...item})),
+                    total: cart.reduce((sum, item) => sum + (parseFloat(item.priceAfter) * item.qty), 0),
+                    time: new Date().toLocaleString()
+                };
+                // حفظ الطلب في قاعدة البيانات
+                saveOrderToDB(order);
+                // عرض ملخص الطلب
+                showOrderSummary(order);
+                // إفراغ السلة
+                cart = [];
+                updateCartCount();
+            };
+        }
+        function showOrderSummary(order) {
+            const container = document.getElementById('mainContainer');
+            let html = `<div class='section-title'>تم إرسال الطلب بنجاح</div>`;
+            html += `<div style='max-width:500px;margin:0 auto;background:#232323;padding:18px 20px;border-radius:10px;'>`;
+            html += `<div style='margin-bottom:10px;'><b>الاسم:</b> ${order.name}</div>`;
+            html += `<div style='margin-bottom:10px;'><b>رقم الواتساب:</b> ${order.whatsapp}</div>`;
+            html += `<div style='margin-bottom:10px;'><b>العنوان:</b> ${order.address}</div>`;
+            html += `<div style='margin-bottom:10px;'><b>الإجمالي:</b> <span style='color:#ffb300;'>${order.total} L.E</span></div>`;
+            html += `<div style='margin-top:18px;text-align:center;'><button onclick='renderProductsSection("creatine")' style='background:#ffb300;color:#222;font-weight:bold;padding:10px 24px;border-radius:8px;font-size:1.1rem;cursor:pointer;border:none;'>العودة للمنتجات</button></div>`;
+            html += `</div>`;
+            container.innerHTML = html;
+        }
+        // حفظ الطلبات في قاعدة البيانات
+        function saveOrderToDB(order) {
+            // استخدم orders كجذر
+            const ordersRef = firebase.database().ref('orders');
+            ordersRef.push(order);
+        }
+    </script>
+    <script>
+        // أضف دالة عرض الرسالة العائمة بعد addToCart مباشرة
+        function showAddToCartMessage(productName) {
+            const msg = document.getElementById('addToCartMsg');
+            if(msg) {
+                msg.innerText = `تم إضافة "${productName}" إلى السلة!`;
+                msg.classList.add('show');
+                clearTimeout(msg._hideTimeout);
+                msg._hideTimeout = setTimeout(()=>msg.classList.remove('show'), 1800);
+            }
+        }
+        // أضف دالة عرض الطلبات في الأدمن
+        function renderOrdersList() {
+            const container = document.getElementById('mainContainer');
+            container.style.maxWidth = '90vw';
+            container.style.width = '90vw';
+            container.style.minWidth = '0';
+            container.innerHTML = `<div style='display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;'>
+                <div class='section-title' style='margin-bottom:0;'>الطلبات</div>
+                <button onclick='renderAdminPanel()' style='background:#ffb300;color:#222;font-weight:bold;padding:10px 24px;border-radius:8px;font-size:1.1rem;cursor:pointer;border:none;'>العودة للمنتجات</button>
+            </div><div id='ordersList'></div>`;
+            const ordersRef = firebase.database().ref('orders');
+            // استخدم on بدلاً من once لسرعة التحديث
+            ordersRef.on('value', snapshot => {
+                const val = snapshot.val() || {};
+                const orders = Object.entries(val); // [id, order]
+                let html = '';
+                if (!orders.length) {
+                    html = '<div style="text-align:center;">لا توجد طلبات بعد.</div>';
+                } else {
+                    html = `<div style='overflow-x:auto;'><table style='width:100%;border-collapse:collapse;background:#232323;border-radius:10px;box-shadow:0 2px 12px #0003;'>
+                        <thead>
+                            <tr style='background:#181818;color:#ffb300;'>
+                                <th style='padding:10px 6px;border-bottom:2px solid #444;'>الاسم</th>
+                                <th style='padding:10px 6px;border-bottom:2px solid #444;'>رقم الواتساب</th>
+                                <th style='padding:10px 6px;border-bottom:2px solid #444;'>العنوان</th>
+                                <th style='padding:10px 6px;border-bottom:2px solid #444;'>المنتجات المطلوبة</th>
+                                <th style='padding:10px 6px;border-bottom:2px solid #444;'>الإجمالي</th>
+                                <th style='padding:10px 6px;border-bottom:2px solid #444;'>تاريخ الطلب</th>
+                                <th style='padding:10px 6px;border-bottom:2px solid #444;'>حالة الطلب</th>
+                                <th style='padding:10px 6px;border-bottom:2px solid #444;'>حذف</th>
+                            </tr>
+                        </thead>
+                        <tbody>`;
+                    orders.reverse().forEach(([id, order]) => {
+                        let productsHtml = '';
+                        if(order.items && order.items.length) {
+                            productsHtml = order.items.map(item => `
+                                <div style='display:flex;align-items:center;gap:6px;margin-bottom:4px;'>
+                                    <img src='${item.images && item.images[0] ? item.images[0] : ''}' style='width:38px;height:38px;object-fit:cover;border-radius:5px;border:1px solid #ffb300;'>
+                                    <span style='font-size:1rem;color:#ffb300;font-weight:bold;'>${item.name}</span>
+                                    <span style='font-size:0.95rem;color:#fff;'>× ${item.qty}</span>
+                                </div>
+                            `).join('');
+                        }
+                        html += `<tr style='border-bottom:1px solid #333;'>
+                            <td style='padding:8px 6px;'>${order.name}</td>
+                            <td style='padding:8px 6px;'>${order.whatsapp}</td>
+                            <td style='padding:8px 6px;'>${order.address}</td>
+                            <td style='padding:8px 6px;'>${productsHtml}</td>
+                            <td style='padding:8px 6px;color:#ffb300;font-weight:bold;'>${order.total} L.E</td>
+                            <td style='padding:8px 6px;'>${order.time || ''}</td>
+                            <td style='padding:8px 6px;'>
+                                <select class='order-status-select' data-order-id='${id}' onchange='updateOrderStatus("${id}", this.value)' style='padding:4px 8px;border-radius:6px;font-size:1rem;background:#181818;color:#ffb300;border:1px solid #444;'>
+                                    <option value='قيد الانتظار' ${!order.status||order.status==='قيد الانتظار'?'selected':''}>قيد الانتظار</option>
+                                    <option value='تم التوصيل' ${order.status==='تم التوصيل'?'selected':''}>تم التوصيل</option>
+                                    <option value='ملغي' ${order.status==='ملغي'?'selected':''}>ملغي</option>
+                                </select>
+                            </td>
+                            <td style='padding:8px 6px;text-align:center;'>
+                                <button onclick='deleteOrder("${id}")' title='حذف الطلب' style='background:none;border:none;cursor:pointer;'>
+                                    <svg width='22' height='22' viewBox='0 0 24 24' fill='none' xmlns='http://www.w3.org/2000/svg'><path d='M3 6H5H21' stroke='#ff4444' stroke-width='2'/><path d='M8 6V4C8 2.89543 8.89543 2 10 2H14C15.1046 2 16 2.89543 16 4V6M19 6V20C19 21.1046 18.1046 22 17 22H7C5.89543 22 5 21.1046 5 20V6M10 11V17M14 11V17' stroke='#ff4444' stroke-width='2'/></svg>
+                                </button>
+                            </td>
+                        </tr>`;
+                    });
+                    html += `</tbody></table></div>`;
+                }
+                document.getElementById('ordersList').innerHTML = html;
+                styleOrderStatusSelects();
+            });
+        }
+        // دالة حذف الطلب
+        function deleteOrder(id) {
+            if(confirm('هل أنت متأكد من حذف هذا الطلب؟')) {
+                firebase.database().ref('orders/' + id).remove();
+            }
+        }
+        // أضف دالة تحديث حالة الطلب
+        function updateOrderStatus(id, status) {
+            firebase.database().ref('orders/' + id + '/status').set(status);
+            setTimeout(styleOrderStatusSelects, 100); // تحديث اللون بعد التغيير
+        }
+        // أضف دالة لتلوين القوائم حسب الحالة
+        function styleOrderStatusSelects() {
+            document.querySelectorAll('.order-status-select').forEach(sel => {
+                const val = sel.value;
+                if(val === 'تم التوصيل') {
+                    sel.style.background = '#25d366';
+                    sel.style.color = '#fff';
+                    sel.style.fontWeight = 'bold';
+                    sel.style.borderColor = '#25d366';
+                } else if(val === 'ملغي') {
+                    sel.style.background = '#ff4444';
+                    sel.style.color = '#fff';
+                    sel.style.fontWeight = 'bold';
+                    sel.style.borderColor = '#ff4444';
+                } else {
+                    sel.style.background = '#ffb300';
+                    sel.style.color = '#222';
+                    sel.style.fontWeight = 'bold';
+                    sel.style.borderColor = '#ffb300';
+                }
+            });
+        }
     </script>
 </body>
 </html>
