@@ -28,6 +28,11 @@
             padding: 0px;
             height: 54px;
             box-shadow: 0 2px 8px #0006;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 10001;
         }
         .navbar .logo {
             font-size: 2.2rem;
@@ -379,7 +384,7 @@
             </li>
         </ul>
     </nav>
-    <div id="searchBarContainer" style="display:flex;justify-content:center;align-items:center;margin:8px 0 0 0;gap:12px;margin-right:24px;">
+    <div id="searchBarContainer" style="display:flex;justify-content:center;align-items:center;margin:8px 0 0 0;gap:12px;margin-right:24px;position:fixed;top:54px;left:0;right:0;z-index:10000;background:#232323;padding:8px 0 8px 0;box-shadow:0 2px 8px #0003;">
         <input id="searchInput" type="text" placeholder=" Search for product...        🔍" 
             style="width:60%;max-width:400px;padding:10px 16px;font-size:1.2rem;border-radius:8px;border:none;outline:none;box-shadow:0 2px 8px #0003;background:#232323;color:#fff;"/>
         <button id="favoritesBtn" style="position:relative;background:none;border:none;cursor:pointer;outline:none;display:flex;align-items:center;margin-right:0px;">
@@ -412,7 +417,7 @@
         </svg>
     </button>
     <div id="addToCartMsg" class="add-to-cart-msg"></div>
-    <div class="container" id="mainContainer">
+    <div class="container" id="mainContainer" style="margin-top:120px;">
         <!-- المحتوى يتغير هنا -->
     </div>
     <div id="adminLoginModal" class="admin-login-modal" style="display:none;">
