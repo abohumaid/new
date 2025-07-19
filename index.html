@@ -19,6 +19,7 @@
             background: #181818;
             color: #fff;
             min-height: 100vh;
+            padding-top: 100px;
         }
         .navbar {
             display: flex;
@@ -31,7 +32,7 @@
             position: fixed;
             top: 0;
             left: 0;
-            right: 0;
+            width: 100vw;
             z-index: 10001;
         }
         .navbar .logo {
@@ -77,7 +78,13 @@
             width: 32px;
         }
         #searchBarContainer {
-            margin-bottom: 0 !important;
+            position: fixed;
+            top: 54px;
+            left: 0;
+            width: 100vw;
+            z-index: 10000;
+            background: #232323;
+            padding-bottom: 6px;
         }
         #searchInput::placeholder {
             color: #bbb;
@@ -307,11 +314,13 @@
         }
         @media (max-width: 700px) {
             .container { padding: 8px; }
-            .navbar { flex-direction: column; height: auto; padding: 0 4px; }
-            .navbar { font-size: 1.3rem; }
+            .navbar { flex-direction: column; height: auto; padding: 0 4px; font-size: 1.3rem; }
             .logo { font-size: 2rem; }
             .navbar ul { gap: 6px; }
             .navbar li { font-size: 1.05rem; padding: 0 2px 2px 2px; }
+            #searchBarContainer { flex-direction: column; gap: 8px; padding-bottom: 8px; }
+            #searchInput { width: 95vw !important; max-width: 98vw !important; font-size: 1.1rem; }
+            #cartBtn, #favoritesBtn { width: 44px; height: 44px; min-width: 44px; min-height: 44px; }
         }
         /* Splash Screen Animations */
         @keyframes shake {
@@ -384,7 +393,7 @@
             </li>
         </ul>
     </nav>
-    <div id="searchBarContainer" style="display:flex;justify-content:center;align-items:center;margin:8px 0 0 0;gap:12px;margin-right:24px;position:fixed;top:54px;left:0;right:0;z-index:10000;background:#232323;padding:8px 0 8px 0;box-shadow:0 2px 8px #0003;">
+    <div id="searchBarContainer" style="display:flex;justify-content:center;align-items:center;margin:8px 0 0 0;gap:12px;margin-right:24px;">
         <input id="searchInput" type="text" placeholder=" Search for product...        🔍" 
             style="width:60%;max-width:400px;padding:10px 16px;font-size:1.2rem;border-radius:8px;border:none;outline:none;box-shadow:0 2px 8px #0003;background:#232323;color:#fff;"/>
         <button id="favoritesBtn" style="position:relative;background:none;border:none;cursor:pointer;outline:none;display:flex;align-items:center;margin-right:0px;">
@@ -417,7 +426,7 @@
         </svg>
     </button>
     <div id="addToCartMsg" class="add-to-cart-msg"></div>
-    <div class="container" id="mainContainer" style="margin-top:120px;">
+    <div class="container" id="mainContainer">
         <!-- المحتوى يتغير هنا -->
     </div>
     <div id="adminLoginModal" class="admin-login-modal" style="display:none;">
