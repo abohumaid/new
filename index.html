@@ -367,38 +367,38 @@
     </div>
     <!-- نهاية شاشة التحميل -->
     <div id="headerBar" style="position:sticky;top:0;z-index:10000;background:#222;box-shadow:0 2px 8px #0006;">
-        <nav class="navbar" style="background:none;box-shadow:none;padding-bottom:0;">
-            <div class="logo">
-                ElFanan-Supplements
+        <div style="display:flex;flex-direction:column;align-items:stretch;">
+            <div style="display:flex;align-items:center;justify-content:space-between;padding:0 12px 0 0;">
+                <div class="logo" style="margin-left:12px;">ElFanan-Supplements</div>
+                <div id="searchBarContainer" style="display:flex;justify-content:center;align-items:center;margin:8px 0 0 0;gap:12px;margin-right:24px;">
+                    <input id="searchInput" type="text" placeholder=" Search for product...        🔍" 
+                        style="width:60%;max-width:400px;padding:10px 16px;font-size:1.2rem;border-radius:8px;border:none;outline:none;box-shadow:0 2px 8px #0003;background:#232323;color:#fff;"/>
+                    <button id="favoritesBtn" style="position:relative;background:none;border:none;cursor:pointer;outline:none;display:flex;align-items:center;margin-right:0px;">
+                        <svg id="favoritesIcon" width="36" height="36" viewBox="0 0 24 24" fill="none">
+                            <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41 0.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"
+                                stroke="#ffb300" stroke-width="2" fill="#232323"/>
+                        </svg>
+                        <span id="favoritesCount" style="position:absolute;top:0;right:0;background:#ffb300;color:#222;font-size:1rem;font-weight:bold;border-radius:50%;width:22px;height:22px;display:flex;align-items:center;justify-content:center;">0</span>
+                    </button>
+                    <button id="cartBtn" style="position:relative;background:none;border:none;cursor:pointer;outline:none;display:flex;align-items:center;margin-left:0px;">
+                        <svg width="36" height="36" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <circle cx="12" cy="12" r="12" fill="#ffb300"/>
+                            <path d="M7 7h10l-1 9H8L7 7z" stroke="#222" stroke-width="2" fill="#fff"/>
+                            <circle cx="9.5" cy="18" r="1.5" fill="#222"/>
+                            <circle cx="14.5" cy="18" r="1.5" fill="#222"/>
+                        </svg>
+                        <span id="cartCount" style="position:absolute;top:0;right:0;background:#ff4444;color:#fff;font-size:1rem;font-weight:bold;border-radius:50%;width:22px;height:22px;display:flex;align-items:center;justify-content:center;">0</span>
+                    </button>
+                </div>
             </div>
-            <ul>
-                <li data-section="admin" id="adminBtn" title="لوحة الأدمن">
-                    <img src="icon4.png" alt="Admin Icon" style="width:28px;height:32px;vertical-align:middle;border-radius:50%;background:transparent;  width: 50px; height: 40px;" />
-                <li style="padding-top: 7px;" data-section="man" class="active">Man</li>
-                <li style="padding-top: 7px;" data-section="woman">Woman</li>
-                <li style="padding-top: 7px;" data-section="offers">Offers</li>
-                </li>
-            </ul>
-        </nav>
-        <div id="searchBarContainer" style="display:flex;justify-content:center;align-items:center;margin:8px 0 0 0;gap:12px;margin-right:24px;">
-            <input id="searchInput" type="text" placeholder=" Search for product...        🔍" 
-                style="width:60%;max-width:400px;padding:10px 16px;font-size:1.2rem;border-radius:8px;border:none;outline:none;box-shadow:0 2px 8px #0003;background:#232323;color:#fff;"/>
-            <button id="favoritesBtn" style="position:relative;background:none;border:none;cursor:pointer;outline:none;display:flex;align-items:center;margin-right:0px;">
-                <svg id="favoritesIcon" width="36" height="36" viewBox="0 0 24 24" fill="none">
-                    <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41 0.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"
-                        stroke="#ffb300" stroke-width="2" fill="#232323"/>
-                </svg>
-                <span id="favoritesCount" style="position:absolute;top:0;right:0;background:#ffb300;color:#222;font-size:1rem;font-weight:bold;border-radius:50%;width:22px;height:22px;display:flex;align-items:center;justify-content:center;">0</span>
-            </button>
-            <button id="cartBtn" style="position:relative;background:none;border:none;cursor:pointer;outline:none;display:flex;align-items:center;margin-left:0px;">
-                <svg width="36" height="36" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <circle cx="12" cy="12" r="12" fill="#ffb300"/>
-                    <path d="M7 7h10l-1 9H8L7 7z" stroke="#222" stroke-width="2" fill="#fff"/>
-                    <circle cx="9.5" cy="18" r="1.5" fill="#222"/>
-                    <circle cx="14.5" cy="18" r="1.5" fill="#222"/>
-                </svg>
-                <span id="cartCount" style="position:absolute;top:0;right:0;background:#ff4444;color:#fff;font-size:1rem;font-weight:bold;border-radius:50%;width:22px;height:22px;display:flex;align-items:center;justify-content:center;">0</span>
-            </button>
+            <nav class="navbar" style="background:none;box-shadow:none;padding-bottom:0;justify-content:center;">
+                <ul style="margin:0 auto;">
+                    <li data-section="admin" id="adminBtn" title="لوحة الأدمن"></li>
+                    <li style="padding-top: 7px;" data-section="man" class="active">Man</li>
+                    <li style="padding-top: 7px;" data-section="woman">Woman</li>
+                    <li style="padding-top: 7px;" data-section="offers">Offers</li>
+                </ul>
+            </nav>
         </div>
     </div>
     <button id="scrollTopBtn" style="display:none;position:fixed;bottom:32px;right:16px;z-index:9999;background:#ffb300;border:none;border-radius:50%;width:54px;height:54px;box-shadow:0 2px 12px #0007;cursor:pointer;align-items:center;justify-content:center;transition:opacity 0.3s;">
