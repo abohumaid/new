@@ -19,7 +19,6 @@
             background: #181818;
             color: #fff;
             min-height: 100vh;
-            padding-top: 100px;
         }
         .navbar {
             display: flex;
@@ -29,11 +28,6 @@
             padding: 0px;
             height: 54px;
             box-shadow: 0 2px 8px #0006;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            z-index: 10001;
         }
         .navbar .logo {
             font-size: 2.2rem;
@@ -78,13 +72,7 @@
             width: 32px;
         }
         #searchBarContainer {
-            position: fixed;
-            top: 54px;
-            left: 0;
-            width: 100vw;
-            z-index: 10000;
-            background: #232323;
-            padding-bottom: 6px;
+            margin-bottom: 0 !important;
         }
         #searchInput::placeholder {
             color: #bbb;
@@ -314,13 +302,11 @@
         }
         @media (max-width: 700px) {
             .container { padding: 8px; }
-            .navbar { flex-direction: column; height: auto; padding: 0 4px; font-size: 1.3rem; }
+            .navbar { flex-direction: column; height: auto; padding: 0 4px; }
+            .navbar { font-size: 1.3rem; }
             .logo { font-size: 2rem; }
             .navbar ul { gap: 6px; }
             .navbar li { font-size: 1.05rem; padding: 0 2px 2px 2px; }
-            #searchBarContainer { flex-direction: column; gap: 8px; padding-bottom: 8px; }
-            #searchInput { width: 95vw !important; max-width: 98vw !important; font-size: 1.1rem; }
-            #cartBtn, #favoritesBtn { width: 44px; height: 44px; min-width: 44px; min-height: 44px; }
         }
         /* Splash Screen Animations */
         @keyframes shake {
