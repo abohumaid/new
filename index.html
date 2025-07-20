@@ -277,8 +277,8 @@
         }
         .products-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-            gap: 18px;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 24px;
         }
         .products-grid .product-card {
             flex-direction: column;
@@ -295,25 +295,18 @@
             to { opacity: 1; transform: translateY(0); }
         }
         .products-grid .product-card img, .products-grid .img-slider {
-            width: 180px !important;
-            height: 180px !important;
+            width: 220px !important;
+            height: 220px !important;
             max-width: 100%;
             max-height: 100%;
         }
         @media (max-width: 700px) {
             .container { padding: 8px; }
-            .products-grid {
-                grid-template-columns: repeat(2, 1fr);
-                gap: 10px;
-            }
-            .products-grid .product-card {
-                min-width: 0;
-                padding: 10px 6px;
-            }
-            .products-grid .product-card img, .products-grid .img-slider {
-                width: 120px !important;
-                height: 120px !important;
-            }
+            .navbar { flex-direction: column; height: auto; padding: 0 4px; }
+            .navbar { font-size: 1.3rem; }
+            .logo { font-size: 2rem; }
+            .navbar ul { gap: 6px; }
+            .navbar li { font-size: 1.05rem; padding: 0 2px 2px 2px; }
         }
         /* Splash Screen Animations */
         @keyframes shake {
@@ -365,6 +358,15 @@
             opacity: 1;
             transform: translateY(0);
         }
+        /* إخفاء زر الأدمن في الناب بار تمامًا */
+        li#adminBtn[data-section="admin"] {
+            width: 0 !important;
+            height: 0 !important;
+            padding: 0 !important;
+            margin: 0 !important;
+            overflow: hidden !important;
+            display: inline-block !important;
+        }
     </style>
 </head>
 <body>
@@ -375,8 +377,10 @@
     <!-- نهاية شاشة التحميل -->
     <div id="headerBar" style="position:sticky;top:0;z-index:10000;background:#222;box-shadow:0 2px 8px #0006;">
         <div style="display:flex;flex-direction:column;align-items:stretch;">
-            <div style="width:100%;display:flex;justify-content:center;align-items:center;padding:8px 0 0 0;">
-                <div class="logo" style="font-size:2.2rem;font-weight:700;letter-spacing:2px;color:#ffb300;">رُولِيثْ                </div>
+            <div style="width:100%;display:flex;justify-content:center;align-items:center;">
+                <div class="logo" style="display:flex;justify-content:center;align-items:center;">
+                    <img src="icon4.png" alt="رُولِيثْ" style="height:54px;width:auto;display:block;" />
+                </div>
             </div>
             <div style="width:100%;display:flex;justify-content:center;align-items:center;margin:8px 0 0 0;gap:12px;">
                 <div id="searchBarContainer" style="display:flex;justify-content:center;align-items:center;gap:12px;margin:0;">
@@ -591,7 +595,7 @@
                         </div>
                         <div class='product-title'>${prod.name}</div>
                         <div class='product-desc'>${prod.desc}</div>
-                        <div class='product-type'>${type.label}</div>
+                        <div class='product-type'>${type ? type.label : ''}</div>
                         <div class='product-prices'>
                             <del>${prod.priceBefore} L.E</del> <span>${prod.priceAfter} L.E</span>
                         </div>
@@ -1399,6 +1403,17 @@
         window.deleteDiscountCode = deleteDiscountCode;
         window.showAddDiscountCodeForm = showAddDiscountCodeForm;
         window.hideAddDiscountCodeForm = hideAddDiscountCodeForm;
+    </script>
+    <!-- عند الضغط مرتين على شعار icon4.png في الهيدر، افتح نافذة الأدمن -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var logoImg = document.querySelector('.logo img');
+            if (logoImg) {
+                logoImg.ondblclick = function(e) {
+                    if (typeof showAdminLogin === 'function') showAdminLogin();
+                };
+            }
+        });
     </script>
 </body>
 </html>
