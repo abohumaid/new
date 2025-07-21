@@ -1428,5 +1428,54 @@
             }
         });
     </script>
+    <script>
+    // دعم السحب يمين/يسار لتغيير قسم الناب بار على الهاتف
+    (function() {
+        const navOrder = ['man', 'woman', 'offers'];
+        let touchStartX = null;
+        let touchEndX = null;
+        function handleGesture() {
+            if (touchStartX === null || touchEndX === null) return;
+            const dx = touchEndX - touchStartX;
+            if (Math.abs(dx) < 50) return; // تجاهل السحب القصير
+            const activeLi = document.querySelector('.navbar li.active');
+            if (!activeLi) return;
+            const currentSection = activeLi.getAttribute('data-section');
+            const idx = navOrder.indexOf(currentSection);
+            if (idx === -1) return;
+            let newIdx = idx;
+            if (dx > 50 && idx < navOrder.length - 1) {
+                // سحب يمين (إلى القسم التالي)
+                newIdx = idx + 1;
+            } else if (dx < -50 && idx > 0) {
+                // سحب يسار (إلى القسم السابق)
+                newIdx = idx - 1;
+            }
+            if (newIdx !== idx) {
+                const newSection = navOrder[newIdx];
+                const newLi = document.querySelector('.navbar li[data-section="' + newSection + '"]');
+                if (newLi) newLi.click();
+            }
+        }
+        // استمع للسحب على mainContainer أو body
+        const swipeTarget = document.getElementById('mainContainer') || document.body;
+        swipeTarget.addEventListener('touchstart', function(e) {
+            if (e.touches.length === 1) {
+                touchStartX = e.touches[0].clientX;
+                touchEndX = null;
+            }
+        });
+        swipeTarget.addEventListener('touchmove', function(e) {
+            if (e.touches.length === 1) {
+                touchEndX = e.touches[0].clientX;
+            }
+        });
+        swipeTarget.addEventListener('touchend', function(e) {
+            handleGesture();
+            touchStartX = null;
+            touchEndX = null;
+        });
+    })();
+    </script>
 </body>
 </html>
