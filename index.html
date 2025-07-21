@@ -197,16 +197,16 @@
             background: #1a1a1a;
             border-radius: 10px;
             box-shadow: 0 2px 12px #0005;
-            padding: 18px 20px;
-            margin-bottom: 18px;
+            padding: 10px 20px;
+            margin-bottom: 12px;
             display: flex;
-            gap: 18px;
+            gap: 12px;
             align-items: flex-start;
             position: relative;
         }
         .product-card img {
-            width: 220px;
-            height: 220px;
+            width: 180px;
+            height: 180px;
             object-fit: cover;
             border-radius: 8px;
             border: 2px solid #ffb300;
@@ -222,16 +222,16 @@
         }
         .product-desc {
             font-size: 1.1rem;
-            margin-bottom: 8px;
+            margin-bottom: 2px;
         }
         .product-type {
             font-size: 1rem;
             color: #aaa;
-            margin-bottom: 6px;
+            margin-bottom: 0;
         }
         .product-prices {
             font-size: 1.5rem;
-            margin-bottom: 10px;
+            margin-bottom: 6px;
             font-weight: bold;
             display: flex;
             flex-direction: row-reverse;
@@ -295,8 +295,8 @@
             to { opacity: 1; transform: translateY(0); }
         }
         .products-grid .product-card img, .products-grid .img-slider {
-            width: 220px !important;
-            height: 220px !important;
+            width: 180px !important;
+            height: 180px !important;
             max-width: 100%;
             max-height: 100%;
         }
@@ -366,6 +366,17 @@
             margin: 0 !important;
             overflow: hidden !important;
             display: inline-block !important;
+        }
+        /* إخفاء نص نوع المنتج (man, woman, offers) في كارت المنتج */
+        .product-card .product-type {
+            font-size: 0 !important;
+            height: 0 !important;
+            padding: 0 !important;
+            margin: 0 !important;
+            line-height: 0 !important;
+        }
+        .add-to-cart-btn {
+            margin-top: 2px !important;
         }
     </style>
 </head>
