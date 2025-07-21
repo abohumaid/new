@@ -1442,19 +1442,25 @@
             if (!activeLi) return;
             const currentSection = activeLi.getAttribute('data-section');
             const idx = navOrder.indexOf(currentSection);
-            if (idx === -1) return;
-            let newIdx = idx;
-            if (dx > 50 && idx < navOrder.length - 1) {
-                // سحب يمين (إلى القسم التالي)
-                newIdx = idx + 1;
-            } else if (dx < -50 && idx > 0) {
-                // سحب يسار (إلى القسم السابق)
-                newIdx = idx - 1;
+            let nextIdx = idx;
+            if (dx < 0 && idx < navOrder.length - 1) {
+                // سحب لليسار
+                nextIdx = idx + 1;
+            } else if (dx > 0 && idx > 0) {
+                // سحب لليمين
+                nextIdx = idx - 1;
             }
-            if (newIdx !== idx) {
-                const newSection = navOrder[newIdx];
-                const newLi = document.querySelector('.navbar li[data-section="' + newSection + '"]');
-                if (newLi) newLi.click();
+            if (nextIdx !== idx) {
+                // فعّل القسم الجديد
+                const nextSection = navOrder[nextIdx];
+                const nextLi = document.querySelector('.navbar li[data-section="' + nextSection + '"]');
+                if (nextLi) {
+                    document.querySelectorAll('.navbar li').forEach(l=>l.classList.remove('active'));
+                    nextLi.classList.add('active');
+                    document.getElementById('searchInput').value = '';
+                    window.currentSearchTerm = '';
+                    renderProductsSection(nextSection);
+                }
             }
         }
         // استمع للسحب على mainContainer أو body
