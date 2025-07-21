@@ -16,24 +16,28 @@
         body {
             margin: 0;
             font-family: 'Teko', Arial, sans-serif;
-            background: #181818;
-            color: #fff;
+            background: #faf9f6;
+            color: #222;
             min-height: 100vh;
         }
         .navbar {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            background: #222;
+            background: #fff;
             padding: 0px;
             height: 54px;
-            box-shadow: 0 2px 8px #0006;
+            box-shadow: 0 2px 8px #e0e0e0;
+        }
+        #headerBar {
+            background: #fff !important;
+            box-shadow: 0 2px 8px #e0e0e0 !important;
         }
         .navbar .logo {
             font-size: 2.2rem;
             font-weight: 700;
             letter-spacing: 2px;
-            color: #ffb300;
+            color: #5a4e7c;
             display: flex;
             align-items: center;
             padding: 10px;
@@ -54,7 +58,7 @@
             padding: 0 10px 2px 10px;
         }
         .navbar li:hover, .navbar li.active {
-            color: #ffb300;
+            color: #b45d8c;
         }
         .navbar li::after {
             content: '';
@@ -69,7 +73,7 @@
         }
         .navbar li.active::after,
         .navbar li:hover::after {
-            background: #ffb300;
+            background: #eec9d2;
             width: 32px;
         }
         #searchBarContainer {
@@ -80,18 +84,25 @@
             opacity: 1;
         }
         #searchInput {
-            background: #232323;
-            color: #fff;
-            border: none;
-            box-shadow: 0 2px 8px #0003;
+            background: #fff;
+            color: #5a4e7c;
+            border: 1.5px solid #eec9d2;
+            box-shadow: 0 2px 8px #eec9d2;
+            transition: box-shadow 0.2s, border 0.2s;
+        }
+        #searchInput:focus {
+            outline: none;
+            border: 1.5px solid #b9b4e7;
+            box-shadow: 0 0 0 2px #b9b4e733;
         }
         .container {
             max-width: 1100px;
             margin: 16px auto 0 auto;
             padding: 20px;
-            background: #232323;
+            background: #fff;
             border-radius: 12px;
-            box-shadow: 0 4px 24px #0005;
+            box-shadow: 0 4px 24px #e0e0e0;
+            border: 1px solid #eec9d2;
         }
         .admin-login-modal {
             position: fixed;
@@ -103,29 +114,29 @@
             z-index: 1000;
         }
         .admin-login-box {
-            background: #222;
+            background: #fff;
             padding: 32px 28px;
             border-radius: 10px;
-            box-shadow: 0 2px 16px #000a;
+            box-shadow: 0 2px 16px #e0e0e0;
             min-width: 320px;
             text-align: center;
         }
         .admin-login-box h2 {
             margin-bottom: 18px;
-            color: #ffb300;
+            color: #5a4e7c;
             font-size: 2rem;
         }
         .admin-login-box input {
             width: 90%;
             padding: 10px;
             margin: 10px 0;
-            border: none;
+            border: 1px solid #e0e0e0;
             border-radius: 6px;
             font-size: 1.1rem;
         }
         .admin-login-box button {
-            background: #ffb300;
-            color: #222;
+            background: #eec9d2;
+            color: #fff;
             border: none;
             padding: 10px 30px;
             border-radius: 6px;
@@ -143,12 +154,12 @@
             text-align: right;
         }
         .admin-panel h2 {
-            color: #ffb300;
+            color: #5a4e7c;
             margin-bottom: 18px;
         }
         .add-product-btn {
-            background: #ffb300;
-            color: #222;
+            background: #eec9d2 !important;
+            color: #fff !important;
             border: none;
             padding: 10px 24px;
             border-radius: 6px;
@@ -182,8 +193,8 @@
             color: #222;
         }
         .product-form button {
-            background: #ffb300;
-            color: #222;
+            background: #eec9d2;
+            color: #fff;
             border: none;
             padding: 10px 24px;
             border-radius: 6px;
@@ -195,9 +206,10 @@
             margin-top: 30px;
         }
         .product-card {
-            background: #1a1a1a;
+            background: #fff;
             border-radius: 10px;
-            box-shadow: 0 2px 12px #0005;
+            box-shadow: 0 2px 12px #e0e0e0;
+            border: 1px solid #eec9d2;
             padding: 10px 20px;
             margin-bottom: 12px;
             display: flex;
@@ -210,7 +222,7 @@
             height: 180px;
             object-fit: cover;
             border-radius: 8px;
-            border: 2px solid #ffb300;
+            border: 2px solid #eec9d2;
             background: #fff;
         }
         .product-info {
@@ -218,7 +230,7 @@
         }
         .product-title {
             font-size: 1.5rem;
-            color: #ffb300;
+            color: #5a4e7c;
             margin-bottom: 6px;
         }
         .product-desc {
@@ -241,7 +253,7 @@
             gap: 12px;
         }
         .product-prices del {
-            color: #ff4444;
+            color: #b45d8c;
             margin-right: 8px;
             margin-left: 0;
         }
@@ -256,7 +268,7 @@
         }
         .product-actions button {
             background: none;
-            color: #ffb300;
+            color: #b45d8c;
             border: none;
             border-radius: 5px;
             padding: 4px 6px;
@@ -267,12 +279,12 @@
             align-items: center;
         }
         .product-actions button:hover {
-            color: #222;
-            background: #ffb300;
+            color: #fff;
+            background: #b45d8c;
         }
         .section-title {
             font-size: 2rem;
-            color: #ffb300;
+            color: #5a4e7c;
             margin-bottom: 18px;
             text-align: center;
         }
@@ -305,7 +317,7 @@
             .container { padding: 8px; }
             .navbar { flex-direction: column; height: auto; padding: 0 4px; }
             .navbar { font-size: 1.5rem; }
-            .logo { font-size: 2.3rem !important; }
+            .logo { font-size: 2.3rem !important; color: #5a4e7c !important; }
             .navbar ul { gap: 6px; }
             .navbar li { font-size: 1.5rem !important; padding: 0 6px 2px 6px; }
             #searchInput { font-size: 1.3rem !important; }
@@ -319,7 +331,7 @@
             40% { transform: translate(20px, 0) rotate(10deg); }
             50% { transform: translate(-20px, 0) rotate(-10deg); }
             60% { transform: translate(20px, 0) rotate(10deg); }
-            70% { transform: translate(-20px, 0) rotate(10deg); }
+            70% { transform: translate(-20px, 0) rotate(-10deg); }
             80% { transform: translate(-20px, 0) rotate(-10deg); }
             90% { transform: translate(20px, 0) rotate(10deg); }
             100% { transform: translate(0, 0) rotate(0deg); }
@@ -344,13 +356,13 @@
             position: fixed;
             top: 80px;
             right: 30px;
-            background: #25d366;
+            background: #eec9d2;
             color: #fff;
             font-size: 1.1rem;
             font-weight: bold;
             padding: 14px 28px;
             border-radius: 10px;
-            box-shadow: 0 2px 12px #0005;
+            box-shadow: 0 2px 12px #e0e0e0;
             z-index: 99999;
             opacity: 0;
             pointer-events: none;
@@ -359,6 +371,12 @@
         .add-to-cart-msg.show {
             opacity: 1;
             transform: translateY(0);
+        }
+        #cartBtn svg circle {
+            fill: #eec9d2 !important;
+        }
+        #favoritesBtn svg path {
+            fill: #eec9d2 !important;
         }
         /* إخفاء زر الأدمن في الناب بار تمامًا */
         li#adminBtn[data-section="admin"] {
@@ -379,16 +397,41 @@
         }
         .add-to-cart-btn {
             margin-top: 2px !important;
+            background: #b9b4e7 !important;
+            color: #fff !important;
+            border: none;
+        }
+        .add-to-cart-btn:hover {
+            background: #eec9d2 !important;
+            color: #5a4e7c !important;
+        }
+        .add-product-btn, .order-status-select {
+            background: #e6b400 !important;
+            color: #fff !important;
+            border: none;
+        }
+        .add-product-btn:hover, .order-status-select:hover {
+            background: #fffbe6 !important;
+            color: #b38f00 !important;
+        }
+        /* حدود القلب بنفسجي داكن */
+        #favoritesBtn svg path {
+            stroke: #5a4e7c !important;
+        }
+        /* رقم المفضلات فوق القلب أبيض بخلفية بنفسجي فاتح */
+        #favoritesCount {
+            background: #b9b4e7 !important;
+            color: #fff !important;
         }
     </style>
 </head>
 <body>
     <!-- Splash Screen -->
-    <div id="splashScreen" style="position:fixed;z-index:20000;top:0;left:0;width:100vw;height:100vh;background:#181818;display:flex;align-items:center;justify-content:center;flex-direction:column;transition:opacity 0.4s;">
+    <div id="splashScreen" style="position:fixed;z-index:20000;top:0;left:0;width:100vw;height:100vh;background:#faf9f6;display:flex;align-items:center;justify-content:center;flex-direction:column;transition:opacity 0.4s;">
         <img id="splashLogo" src="icon4.png" alt="Logo" style="width:120px;height:120px;" />
     </div>
     <!-- نهاية شاشة التحميل -->
-    <div id="headerBar" style="position:sticky;top:0;z-index:10000;background:#222;box-shadow:0 2px 8px #0006;">
+    <div id="headerBar" style="position:sticky;top:0;z-index:10000;background:#fff;box-shadow:0 2px 8px #e0e0e0;">
         <div style="display:flex;flex-direction:column;align-items:stretch;">
             <div style="width:100%;display:flex;justify-content:center;align-items:center;">
                 <div class="logo" style="display:flex;justify-content:center;align-items:center;">
@@ -398,7 +441,7 @@
             <div style="width:100%;display:flex;justify-content:center;align-items:center;margin:8px 0 0 0;gap:12px;">
                 <div id="searchBarContainer" style="display:flex;justify-content:center;align-items:center;gap:12px;margin:0;">
                     <input id="searchInput" type="text" placeholder=" Search for product...        🔍" 
-                        style="width:60%;max-width:400px;padding:10px 16px;font-size:1.2rem;border-radius:8px;border:none;outline:none;box-shadow:0 2px 8px #0003;background:#232323;color:#fff;"/>
+                        style="width:60%;max-width:400px;padding:10px 16px;font-size:1.2rem;border-radius:8px;"/>
                     <button id="favoritesBtn" style="position:relative;background:none;border:none;cursor:pointer;outline:none;display:flex;align-items:center;margin-right:0px;">
                         <svg id="favoritesIcon" width="36" height="36" viewBox="0 0 24 24" fill="none">
                             <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41 0.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"
@@ -408,7 +451,7 @@
                     </button>
                     <button id="cartBtn" style="position:relative;background:none;border:none;cursor:pointer;outline:none;display:flex;align-items:center;margin-left:0px;">
                         <svg width="36" height="36" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <circle cx="12" cy="12" r="12" fill="#ffb300"/>
+                            <circle cx="12" cy="12" r="12" fill="#e6b400"/>
                             <path d="M7 7h10l-1 9H8L7 7z" stroke="#222" stroke-width="2" fill="#fff"/>
                             <circle cx="9.5" cy="18" r="1.5" fill="#222"/>
                             <circle cx="14.5" cy="18" r="1.5" fill="#222"/>
@@ -427,10 +470,10 @@
             </nav>
         </div>
     </div>
-    <button id="scrollTopBtn" style="display:none;position:fixed;bottom:32px;right:16px;z-index:9999;background:#ffb300;border:none;border-radius:50%;width:54px;height:54px;box-shadow:0 2px 12px #0007;cursor:pointer;align-items:center;justify-content:center;transition:opacity 0.3s;">
+    <button id="scrollTopBtn" style="display:none;position:fixed;bottom:32px;right:16px;z-index:9999;background:#b9b4e7;border:none;border-radius:50%;width:54px;height:54px;box-shadow:0 2px 12px #e0e0e0;cursor:pointer;align-items:center;justify-content:center;transition:opacity 0.3s;">
         <svg width="40" height="40" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <circle cx="12" cy="12" r="12" fill="#ffb300"/>
-            <path d="M8 14l4-4 4 4" stroke="#222" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <circle cx="12" cy="12" r="12" fill="#b9b4e7"/>
+            <path d="M8 14l4-4 4 4" stroke="#5a4e7c" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
         </svg>
     </button>
     <button id="whatsappBtn" style="display:flex;position:fixed;bottom:100px;right:16px;z-index:9999;background:#25d366;border:none;border-radius:50%;width:54px;height:54px;box-shadow:0 2px 12px #0007;cursor:pointer;align-items:center;justify-content:center;transition:opacity 0.3s;">
@@ -805,12 +848,17 @@
                     : `<button title='إخفاء المنتج' onclick='toggleHideProduct(${i})'>
                         <svg width='24' height='24' viewBox='0 0 24 24' fill='none' xmlns='http://www.w3.org/2000/svg'><path d='M17.94 17.94C16.13 19.24 14.13 20 12 20C7.09 20 2.73 16.39 1 12C1.73 10.19 2.91 8.61 4.44 7.36M9.9 5.08C10.59 4.86 11.29 4.73 12 4.73C16.91 4.73 21.27 8.34 23 13C22.27 14.81 21.09 16.39 19.56 17.64M1 1L23 23' stroke='#ffb300' stroke-width='2'/><circle cx='12' cy='12' r='3.5' stroke='#ffb300' stroke-width='2'/></svg>
                     </button>`;
-                html += `<div class='product-card'>
+                html += `<div class='product-card' draggable='true' data-index='${i}'
+                    ondragstart='onAdminProductDragStart(event, ${i})'
+                    ondragover='onAdminProductDragOver(event, ${i})'
+                    ondrop='onAdminProductDrop(event, ${i})'
+                    ondragend='onAdminProductDragEnd(event)'
+                    style='opacity:1;transition:opacity 0.2s;'>
+                    <span class='drag-handle' style='cursor:grab;font-size:2rem;color:#ffb300;user-select:none;margin-right:8px;' title='اسحب للترتيب'>☰</span>
                     <img src="${prod.images[0] || ''}" alt="صورة المنتج" style="cursor:pointer;" onclick="showImageModal('${prod.images[0]}')">
                     <div class='product-info'>
                         <div class='product-title'>${prod.name}</div>
                         <div class='product-desc'>${prod.desc}</div>
-                        <div class='product-type'>${type ? type.label : ''}</div>
                         <div class='product-prices'><del>${prod.priceBefore} L.E</del> <span>${prod.priceAfter} L.E</span></div>
                         <div class='product-actions'>
                             <button title='تعديل المنتج' onclick='editProduct(${i})'>
@@ -826,6 +874,31 @@
             });
             list.innerHTML = html;
         }
+        // --- Drag & Drop للأدمن ---
+        let dragSrcIndex = null;
+        window.onAdminProductDragStart = function(e, idx) {
+            dragSrcIndex = idx;
+            e.dataTransfer.effectAllowed = 'move';
+            e.currentTarget.style.opacity = '0.4';
+        };
+        window.onAdminProductDragOver = function(e, idx) {
+            e.preventDefault();
+            e.dataTransfer.dropEffect = 'move';
+        };
+        window.onAdminProductDrop = function(e, idx) {
+            e.preventDefault();
+            if (dragSrcIndex === null || dragSrcIndex === idx) return;
+            // إعادة ترتيب المنتجات
+            const moved = products.splice(dragSrcIndex, 1)[0];
+            products.splice(idx, 0, moved);
+            dragSrcIndex = null;
+            saveProductsToDB();
+            renderAdminPanel();
+        };
+        window.onAdminProductDragEnd = function(e) {
+            e.currentTarget.style.opacity = '1';
+            dragSrcIndex = null;
+        };
         // زر إخفاء/إظهار المنتج
         window.toggleHideProduct = function(i) {
             products[i].hidden = !products[i].hidden;
