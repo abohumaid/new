@@ -1051,7 +1051,7 @@
             html += `</div>`;
             // إجمالي السعر
             let total = cart.reduce((sum, item) => sum + (parseFloat(item.priceAfter) * (item.qty || 1)), 0);
-            html += `<div style='text-align:center;font-size:1.3rem;margin:18px 0;'>إجمالي السعر: <span style='color:#ffb300;font-weight:bold;'>${total} L.E</span></div>`;
+            html += `<div style='text-align:center;font-size:1.3rem;margin:18px 0;'>L.E إجمالي السعر: <span style='color:#ffb300;font-weight:bold;'> ${total} </span></div>`;
             html += `<div style='text-align:center;'><button onclick='showOrderForm()' style='background:#25d366;color:#fff;font-weight:bold;padding:12px 32px;border-radius:8px;font-size:1.2rem;cursor:pointer;border:none;'>تأكيد الطلب</button></div>`;
             container.innerHTML = html;
         }
