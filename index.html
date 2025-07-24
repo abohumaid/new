@@ -1084,7 +1084,7 @@
                     <div id='discountCodeMsg' style='color:#25d366;font-size:1rem;display:none;'></div>
                     <div id='discountCodeError' style='color:#ff4444;font-size:1rem;display:none;'></div>
                     <div id='orderTotalBox' style='font-size:1.4rem;font-weight:bold;text-align:center;margin:8px 0;'></div>
-                    <button type='submit' style='background:#25d366;color:#222;font-weight:bold;padding:12px 0;border-radius:8px;font-size:1.2rem;cursor:pointer;border:none;'>إرسال الطلب</button>
+                    <button type='submit' style='background:#25d366;color:#ffffff;font-weight:bold;padding:12px 0;border-radius:8px;font-size:1.2rem;cursor:pointer;border:none;'> تأكيد نهائي للطلب</button>
                 </form>`;
             container.innerHTML = html;
             // تحقق مباشر عند الكتابة
@@ -1189,12 +1189,14 @@
         function showOrderSummary(order) {
             const container = document.getElementById('mainContainer');
             let html = `<div class='section-title'>تم إرسال الطلب بنجاح</div>`;
+            
             html += `<div style='max-width:500px;margin:0 auto;background:#ecf1eb;padding:18px 20px;border-radius:10px; direction:rtl; font-size:1.4rem'>`;    
+            html += `<div style='margin-bottom:10px; text-align:center; color:#a1589e;'><b>سوف يتم التواصل في اسرع وقت !!</b> </div>`;
             html += `<div style='margin-bottom:10px;'><b>الاسم:</b> ${order.name}</div>`;
             html += `<div style='margin-bottom:10px;'><b>رقم الواتساب:</b> ${order.whatsapp}</div>`;
             html += `<div style='margin-bottom:10px;'><b>العنوان:</b> ${order.address}</div>`;
             html += `<div style='margin-bottom:10px;'><b>الإجمالي:</b> <span style='color:#ff2a04;'>${order.total} L.E</span></div>`;
-            html += `<div style='margin-top:18px;text-align:center;'><button onclick='renderProductsSection("man")' style='background:#ec35e3;color:#222;font-weight:bold;padding:10px 24px;border-radius:8px;font-size:1.1rem;cursor:pointer;border:none;'>العودة للمنتجات</button></div>`;
+            html += `<div style='margin-top:18px;text-align:center;'><button onclick='renderProductsSection("man")' style='background:#a1589e;color:#ffffff;font-weight:bold;padding:10px 24px;border-radius:8px;font-size:1.1rem;cursor:pointer;border:none;'>العودة للمنتجات</button></div>`;
             html += `</div>`;
             container.innerHTML = html;
         }
@@ -1224,7 +1226,7 @@
             container.style.minWidth = '0';
             container.innerHTML = `<div style='display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;'>
                 <div class='section-title' style='margin-bottom:0;'>الطلبات</div>
-                <button onclick='renderAdminPanel()' style='background:#ffb300;color:#222;font-weight:bold;padding:10px 24px;border-radius:8px;font-size:1.1rem;cursor:pointer;border:none;'>العودة للمنتجات</button>
+                <button onclick='renderAdminPanel()' style='background:#ffb300;color:#ffffff;font-weight:bold;padding:10px 24px;border-radius:8px;font-size:1.1rem;cursor:pointer;border:none;'>العودة للمنتجات</button>
             </div><div id='ordersList'></div>`;
             const ordersRef = firebase.database().ref('orders');
             // استخدم on بدلاً من once لسرعة التحديث
