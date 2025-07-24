@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ElFanan-Supplements</title>
+    <title>Ahmed-Mohamed</title>
     <link rel="icon" href="icon4.png" type="image/svg+xml">
     <!-- Firebase App (the core Firebase SDK) -->
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
@@ -58,7 +58,7 @@
             padding: 0 10px 2px 10px;
         }
         .navbar li:hover, .navbar li.active {
-            color: #b45d8c;
+            color: #b41818;
         }
         .navbar li::after {
             content: '';
@@ -407,7 +407,7 @@
         }
         .add-to-cart-btn:hover {
             background: #eec9d2 !important;
-            color: #5a4e7c !important;
+            color: #7c4e58 !important;
         }
         .add-product-btn, .order-status-select {
             background: #e6b400 !important;
@@ -591,7 +591,7 @@
             modal.style.alignItems = 'center';
             modal.style.justifyContent = 'center';
             modal.style.zIndex = 2000;
-            modal.innerHTML = `<img src='${src}' style='max-width:90vw;max-height:90vh;border-radius:12px;border:4px solid #ffb300;'>`;
+            modal.innerHTML = `<img src='${src}' style='max-width:90vw;max-height:90vh;border-radius:12px;border:4px solid #ec35e3;'>`;
             modal.onclick = () => document.body.removeChild(modal);
             document.body.appendChild(modal);
         }
@@ -1056,7 +1056,7 @@
             html += `</div>`;
             // إجمالي السعر
             let total = cart.reduce((sum, item) => sum + (parseFloat(item.priceAfter) * (item.qty || 1)), 0);
-            html += `<div style='text-align:center;font-size:1.3rem;margin:18px 0;color:#ff2a04;'>L.E ${total}  <span style='color:#85f170;;font-weight:bold;'> : إجمالي السعر </span></div>`;
+            html += `<div style='text-align:center;font-size:1.3rem;margin:18px 0;color:#ff2a04;'>L.E ${total}  <span style='color:#000000;;font-weight:bold;'> : إجمالي السعر </span></div>`;
             html += `<div style='text-align:center;'><button onclick='showOrderForm()' style='background:#25d366;color:#fff;font-weight:bold;padding:12px 32px;border-radius:8px;font-size:1.2rem;cursor:pointer;border:none;'>تأكيد الطلب</button></div>`;
             container.innerHTML = html;
         }
@@ -1212,7 +1212,7 @@
                 msg.innerText = ` ! إلى السلة "${productName}" تم اضافة `;
                 msg.classList.add('show');
                 clearTimeout(msg._hideTimeout);
-                msg._hideTimeout = setTimeout(()=>msg.classList.remove('show'), 1800);
+                msg._hideTimeout = setTimeout(()=>msg.classList.remove('show'), 1500);
             }
         }
         // أضف دالة عرض الطلبات في الأدمن
