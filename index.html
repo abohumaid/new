@@ -169,11 +169,12 @@
             margin-bottom: 18px;
         }
         .product-form {
-            background: #232323;
+            background: #ecf1eb;
             border: 1px solid #444;
             border-radius: 10px;
             padding: 18px 20px;
             margin-bottom: 24px;
+            direction: rtl;
         }
         .product-form label {
             display: block;
@@ -356,7 +357,7 @@
             position: fixed;
             top: 80px;
             right: 30px;
-            background: #eec9d2;
+            background: #f346f3;
             color: #fff;
             font-size: 1.1rem;
             font-weight: bold;
@@ -373,6 +374,9 @@
             transform: translateY(0);
         }
         #cartBtn svg circle {
+            fill: #ec35e3 !important;
+        }
+        #cartBtn svg path {
             fill: #eec9d2 !important;
         }
         #favoritesBtn svg path {
@@ -627,8 +631,8 @@
                         slider = `
                         <div class='img-slider' style='position:relative;'>
                             <img src='${prod.images[0]}' class='slider-img' style='cursor:pointer;' onclick='showImageModal("${prod.images[0]}")' data-slider-idx='0' data-prod-idx='${idx}'>
-                            <button class='slider-btn left' onclick='event.stopPropagation();window.changeSlide(this,${idx},-1)' style='position:absolute;left:2px;top:50%;transform:translateY(-50%);background:#222a;padding:2px 8px;border:none;color:#ffb300;font-size:1.2rem;cursor:pointer;border-radius:4px;'>‹</button>
-                            <button class='slider-btn right' onclick='event.stopPropagation();window.changeSlide(this,${idx},1)' style='position:absolute;right:2px;top:50%;transform:translateY(-50%);background:#222a;padding:2px 8px;border:none;color:#ffb300;font-size:1.2rem;cursor:pointer;border-radius:4px;'>›</button>
+                            <button class='slider-btn left' onclick='event.stopPropagation();window.changeSlide(this,${idx},-1)' style='position:absolute;left:2px;top:50%;transform:translateY(-50%);background:#222a;padding:2px 8px;border:none;color:#ec35e3;font-size:1.2rem;cursor:pointer;border-radius:4px;'>‹</button>
+                            <button class='slider-btn right' onclick='event.stopPropagation();window.changeSlide(this,${idx},1)' style='position:absolute;right:2px;top:50%;transform:translateY(-50%);background:#222a;padding:2px 8px;border:none;color:#ec35e3;font-size:1.2rem;cursor:pointer;border-radius:4px;'>›</button>
                         </div>`;
                     } else {
                         slider = `<img src='${prod.images[0] || ''}' style='cursor:pointer;' onclick='showImageModal("${prod.images[0]}")'>`;
@@ -728,7 +732,7 @@
                 <button class='add-product-btn' onclick='showProductForm()'>+ Add New Product</button>
                 <button class='add-product-btn' style='background:#25d366;margin-right:10px;' onclick='renderOrdersList()'>عرض الطلبات</button>
                 <button class='add-product-btn' style='background:#007bff;margin-right:10px;' onclick='renderDiscountCodesPage()'>أكواد الخصم</button>
-                <div id='productFormContainer'></div>
+                <div id='productFormContainer' style='background:#007bff;margin-right:10px;'></div>
                 <div class='products-list' id='adminProductsList'></div>
             </div>`;
             container.innerHTML = html;
@@ -742,7 +746,7 @@
             if(editIndex !== null) prod = products[editIndex];
             // متغير للاحتفاظ بكل الصور الحالية والجديدة
             let currentImages = prod.images ? [...prod.images] : [];
-            let html = `<form class='product-form' id='productForm'>
+            let html = `<form  class='product-form' id='productForm'>
                 <label>Product Name</label>
                 <input type='text' name='name' value='${prod.name || ''}' required>
                 <label>Description</label>
@@ -1043,16 +1047,16 @@
                         <div class='product-prices'><span>${item.priceAfter} L.E</span></div>
                     </div>
                     <div style='display:flex;flex-direction:column;align-items:center;gap:6px;'>
-                        <button onclick='changeCartQty(${i},1)' style='background:#ffb300;color:#222;border:none;border-radius:50%;width:32px;height:32px;font-size:1.3rem;font-weight:bold;cursor:pointer;'>+</button>
+                        <button onclick='changeCartQty(${i},1)' style='background:#85f170;color:#ecf1eb;border:none;border-radius:50%;width:32px;height:32px;font-size:1.3rem;font-weight:bold;cursor:pointer;'>+</button>
                         <span style='font-size:1.2rem;font-weight:bold;'>${item.qty}</span>
-                        <button onclick='changeCartQty(${i},-1)' style='background:#ff4444;color:#fff;border:none;border-radius:50%;width:32px;height:32px;font-size:1.3rem;font-weight:bold;cursor:pointer;'>-</button>
+                        <button onclick='changeCartQty(${i},-1)' style='background:#ff2a04;color:#ecf1eb;border:none;border-radius:50%;width:32px;height:32px;font-size:1.3rem;font-weight:bold;cursor:pointer;'>-</button>
                     </div>
                 </div>`;
             });
             html += `</div>`;
             // إجمالي السعر
             let total = cart.reduce((sum, item) => sum + (parseFloat(item.priceAfter) * (item.qty || 1)), 0);
-            html += `<div style='text-align:center;font-size:1.3rem;margin:18px 0;'>L.E إجمالي السعر: <span style='color:#ffb300;font-weight:bold;'> ${total} </span></div>`;
+            html += `<div style='text-align:center;font-size:1.3rem;margin:18px 0;color:#ff2a04;'>L.E ${total}  <span style='color:#85f170;;font-weight:bold;'> : إجمالي السعر </span></div>`;
             html += `<div style='text-align:center;'><button onclick='showOrderForm()' style='background:#25d366;color:#fff;font-weight:bold;padding:12px 32px;border-radius:8px;font-size:1.2rem;cursor:pointer;border:none;'>تأكيد الطلب</button></div>`;
             container.innerHTML = html;
         }
@@ -1071,14 +1075,14 @@
             const container = document.getElementById('mainContainer');
             let html = `<div class='section-title'>تأكيد الطلب</div>
                 <form id='orderForm' style='max-width:400px;margin:0 auto;display:flex;flex-direction:column;gap:12px;'>
-                    <input type='text' name='name' placeholder='الاسم بالكامل' required style='padding:10px;border-radius:6px;border:none;font-size:1.1rem;'>
-                    <input type='text' id='whatsappInput' name='whatsapp' placeholder='رقم الواتساب' required maxlength='11' pattern='[0-9]{11}' style='padding:10px;border-radius:6px;border:none;font-size:1.1rem;' autocomplete='off'>
+                    <input type='text' name='name' placeholder='الاسم بالكامل' required style='padding:10px;border-radius:6px;font-size:1.5rem; border-color:#ec35e3; direction:rtl;'>
+                    <input type='text' id='whatsappInput' name='whatsapp' placeholder='رقم الواتساب' required maxlength='11' pattern='[0-9]{11}' style='padding:10px;border-radius:6px;font-size:1.5rem; border-color:#ec35e3;  direction:rtl;' autocomplete='off'>
                     <div id='whatsappError' style='color:#ff4444;font-size:1rem;display:none;'></div>
-                    <textarea name='address' placeholder='العنوان بالتفصيل' required style='padding:10px;border-radius:6px;border:none;font-size:1.1rem;min-height:60px;'></textarea>
-                    <input type='text' id='discountCodeInput' name='discountCode' placeholder='إضافة كود خصم (اختياري)' maxlength='6' style='padding:10px;border-radius:6px;border:none;font-size:1.1rem;'>
+                    <textarea name='address' placeholder='العنوان بالتفصيل' required style='padding:10px;border-radius:6px;font-size:1.5rem;min-height:60px; border-color:#ec35e3; direction:rtl;'></textarea>
+                    <input type='text' id='discountCodeInput' name='discountCode' placeholder='إضافة كود خصم (اختياري)' maxlength='6' style='padding:10px;border-radius:6px;font-size:1.5rem; border-color:#ec35e3; direction:rtl;'>
                     <div id='discountCodeMsg' style='color:#25d366;font-size:1rem;display:none;'></div>
                     <div id='discountCodeError' style='color:#ff4444;font-size:1rem;display:none;'></div>
-                    <div id='orderTotalBox' style='font-size:1.2rem;font-weight:bold;text-align:center;margin:8px 0;'></div>
+                    <div id='orderTotalBox' style='font-size:1.4rem;font-weight:bold;text-align:center;margin:8px 0;'></div>
                     <button type='submit' style='background:#ffb300;color:#222;font-weight:bold;padding:12px 0;border-radius:8px;font-size:1.2rem;cursor:pointer;border:none;'>إرسال الطلب</button>
                 </form>`;
             container.innerHTML = html;
@@ -1103,8 +1107,8 @@
                 let total = cart.reduce((sum, item) => sum + (parseFloat(item.priceAfter) * (item.qty || 1)), 0);
                 let afterDiscount = Math.max(0, total - discountValue);
                 orderTotalBox.innerHTML = discountValue > 0
-                    ? `الإجمالي بعد الخصم: <span style='color:#25d366;'>${afterDiscount} L.E</span> <del style='color:#ff4444;font-size:1rem;margin-right:8px;'>${total} L.E</del>`
-                    : `إجمالي السعر: <span style='color:#ffb300;'>${total} L.E</span>`;
+                    ? `الإجمالي بعد الخصم: <span style='color:#25d366;'>${afterDiscount} </span> <del style='color:#ff4444;font-size:1rem;margin-right:8px;'>${total} </del>`
+                    : ` L.E إجمالي السعر: <span style='color:#ff2a04;'>${total}</span>`;
             }
             updateOrderTotal();
             discountCodeInput.addEventListener('input', function() {
@@ -1184,12 +1188,12 @@
         function showOrderSummary(order) {
             const container = document.getElementById('mainContainer');
             let html = `<div class='section-title'>تم إرسال الطلب بنجاح</div>`;
-            html += `<div style='max-width:500px;margin:0 auto;background:#232323;padding:18px 20px;border-radius:10px;'>`;
+            html += `<div style='max-width:500px;margin:0 auto;background:#ecf1eb;padding:18px 20px;border-radius:10px; direction:rtl; font-size:1.4rem'>`;    
             html += `<div style='margin-bottom:10px;'><b>الاسم:</b> ${order.name}</div>`;
             html += `<div style='margin-bottom:10px;'><b>رقم الواتساب:</b> ${order.whatsapp}</div>`;
             html += `<div style='margin-bottom:10px;'><b>العنوان:</b> ${order.address}</div>`;
-            html += `<div style='margin-bottom:10px;'><b>الإجمالي:</b> <span style='color:#ffb300;'>${order.total} L.E</span></div>`;
-            html += `<div style='margin-top:18px;text-align:center;'><button onclick='renderProductsSection("man")' style='background:#ffb300;color:#222;font-weight:bold;padding:10px 24px;border-radius:8px;font-size:1.1rem;cursor:pointer;border:none;'>العودة للمنتجات</button></div>`;
+            html += `<div style='margin-bottom:10px;'><b>الإجمالي:</b> <span style='color:#ff2a04;'>${order.total} L.E</span></div>`;
+            html += `<div style='margin-top:18px;text-align:center;'><button onclick='renderProductsSection("man")' style='background:#ec35e3;color:#222;font-weight:bold;padding:10px 24px;border-radius:8px;font-size:1.1rem;cursor:pointer;border:none;'>العودة للمنتجات</button></div>`;
             html += `</div>`;
             container.innerHTML = html;
         }
@@ -1205,7 +1209,7 @@
         function showAddToCartMessage(productName) {
             const msg = document.getElementById('addToCartMsg');
             if(msg) {
-                msg.innerText = `تم إضافة "${productName}" إلى السلة!`;
+                msg.innerText = ` ! إلى السلة "${productName}" تم اضافة `;
                 msg.classList.add('show');
                 clearTimeout(msg._hideTimeout);
                 msg._hideTimeout = setTimeout(()=>msg.classList.remove('show'), 1800);
@@ -1256,7 +1260,7 @@
                                 </div>
                             `).join('');
                         }
-                        html += `<tr style='border-bottom:1px solid #333;'>
+                        html += `<tr style='border-bottom:1px solid #333;background-color:#ecf1eb;'>
                             <td style='padding:8px 6px;'>${order.name}</td>
                             <td style='padding:8px 6px;'>${order.whatsapp}</td>
                             <td style='padding:8px 6px;'>${order.address}</td>
@@ -1318,6 +1322,11 @@
             });
         }
     </script>
+     <style>
+        h1{
+            color: #222   ;
+        }
+     </style>
     <script>
         // --- عرض قسم المفضلات ---
         function renderFavoritesSection() {
@@ -1335,9 +1344,9 @@
                     if(prod.images && prod.images.length > 1) {
                         slider = `
                         <div class='img-slider' style='position:relative;'>
-                            <img src='${prod.images[0]}' class='slider-img' style='cursor:pointer;' onclick='showImageModal("${prod.images[0]}")' data-slider-idx='0' data-prod-idx='${idx}'>
-                            <button class='slider-btn left' onclick='event.stopPropagation();window.changeSlide(this,${idx},-1)' style='position:absolute;left:2px;top:50%;transform:translateY(-50%);background:#222a;padding:2px 8px;border:none;color:#ffb300;font-size:1.2rem;cursor:pointer;border-radius:4px;'>‹</button>
-                            <button class='slider-btn right' onclick='event.stopPropagation();window.changeSlide(this,${idx},1)' style='position:absolute;right:2px;top:50%;transform:translateY(-50%);background:#222a;padding:2px 8px;border:none;color:#ffb300;font-size:1.2rem;cursor:pointer;border-radius:4px;'>›</button>
+                            <img src='${prod.images[0]}' class='slider-img' style='cursor:pointer; colo' onclick='showImageModal("${prod.images[0]}")' data-slider-idx='0' data-prod-idx='${idx}'>
+                            <button class='slider-btn left' onclick='event.stopPropagation();window.changeSlide(this,${idx},-1)' style='position:absolute;left:2px;top:50%;transform:translateY(-50%);background:#222a;padding:2px 8px;border:none;color:#ec35e3;font-size:1.2rem;cursor:pointer;border-radius:4px;'>‹</button>
+                            <button class='slider-btn right' onclick='event.stopPropagation();window.changeSlide(this,${idx},1)' style='position:absolute;right:2px;top:50%;transform:translateY(-50%);background:#222a;padding:2px 8px;border:none;color:#ec35e3;font-size:1.2rem;cursor:pointer;border-radius:4px;'>›</button>
                         </div>`;
                     } else {
                         slider = `<img src='${prod.images[0] || ''}' style='cursor:pointer;' onclick='showImageModal("${prod.images[0]}")'>`;
@@ -1396,7 +1405,7 @@
                 if (!codes.length) {
                     html = '<div style="text-align:center;">لا توجد أكواد خصم بعد.</div>';
                 } else {
-                    html = `<div style='overflow-x:auto;'><table style='width:100%;border-collapse:collapse;background:#232323;border-radius:10px;box-shadow:0 2px 12px #0003;'>
+                    html = `<div style='overflow-x:auto;'><table style='width:100%;border-collapse:collapse;background:#ecf1eb;border-radius:10px;box-shadow:0 2px 12px #0003;'>
                         <thead>
                             <tr style='background:#181818;color:#ffb300;'>
                                 <th style='padding:10px 6px;border-bottom:2px solid #444;'>الكود</th>
