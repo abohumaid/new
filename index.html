@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ahmed-Mohamed</title>
-    <link rel="icon" href="icon4.png" type="image/svg+xml">
+    <link rel="icon" href="icon 4.png" type="image/svg+xml">
     <!-- Firebase App (the core Firebase SDK) -->
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
     <!-- Firebase Realtime Database -->
@@ -58,7 +58,7 @@
             padding: 0 10px 2px 10px;
         }
         .navbar li:hover, .navbar li.active {
-            color: #b41818;
+            color: #af0ba7;
         }
         .navbar li::after {
             content: '';
@@ -432,14 +432,14 @@
 <body>
     <!-- Splash Screen -->
     <div id="splashScreen" style="position:fixed;z-index:20000;top:0;left:0;width:100vw;height:100vh;background:#faf9f6;display:flex;align-items:center;justify-content:center;flex-direction:column;transition:opacity 0.4s;">
-        <img id="splashLogo" src="icon4.png" alt="Logo" style="width:120px;height:120px;" />
+        <img id="splashLogo" src="icon 4.png" alt="Logo" style="width:120px;height:120px;" />
     </div>
     <!-- نهاية شاشة التحميل -->
     <div id="headerBar" style="position:sticky;top:0;z-index:10000;background:#fff;box-shadow:0 2px 8px #e0e0e0;">
         <div style="display:flex;flex-direction:column;align-items:stretch;">
             <div style="width:100%;display:flex;justify-content:center;align-items:center;">
                 <div class="logo" style="display:flex;justify-content:center;align-items:center;">
-                    <img src="icon4.png" alt="رُولِيثْ" style="height:54px;width:auto;display:block;" />
+                    <img src="icon 4.png" alt="رُولِيثْ" style="height:54px;width:auto;display:block;" />
                 </div>
             </div>
             <div style="width:100%;display:flex;justify-content:center;align-items:center;margin:8px 0 0 0;gap:12px;">
@@ -1033,7 +1033,7 @@
         function renderCartPage() {
             const container = document.getElementById('mainContainer');
             if(cart.length === 0) {
-                container.innerHTML = `<div class='section-title'>سلة المشتريات</div><div style='text-align:center;'>السلة فارغة.</div>`;
+                container.innerHTML = `<div class='section-title'>سلة المشتريات</div><div style='text-align:center;'>. السلة فارغة</div>`;
                 return;
             }
             let html = `<div class='section-title'>سلة المشتريات</div><div class='products-list'>`;
@@ -1075,15 +1075,15 @@
             const container = document.getElementById('mainContainer');
             let html = `<div class='section-title'>تأكيد الطلب</div>
                 <form id='orderForm' style='max-width:400px;margin:0 auto;display:flex;flex-direction:column;gap:12px;'>
-                    <input type='text' name='name' placeholder='الاسم بالكامل' required style='padding:10px;border-radius:6px;font-size:1.5rem; border-color:#ec35e3; direction:rtl;'>
-                    <input type='text' id='whatsappInput' name='whatsapp' placeholder='رقم الواتساب' required maxlength='11' pattern='[0-9]{11}' style='padding:10px;border-radius:6px;font-size:1.5rem; border-color:#ec35e3;  direction:rtl;' autocomplete='off'>
+                    <input type='text' name='name' placeholder='الاسم' required style='padding:10px;border-radius:6px;font-size:1.2rem; border-color:#ec35e3; direction:rtl;'>
+                    <input type='text' id='whatsappInput' name='whatsapp' placeholder='رقم الواتساب' required maxlength='11' pattern='[0-9]{11}' style='padding:10px;border-radius:6px;font-size:1.2rem; border-color:#ec35e3;  direction:rtl;' autocomplete='off'>
                     <div id='whatsappError' style='color:#ff4444;font-size:1rem;display:none;'></div>
-                    <textarea name='address' placeholder='العنوان بالتفصيل' required style='padding:10px;border-radius:6px;font-size:1.5rem;min-height:60px; border-color:#ec35e3; direction:rtl;'></textarea>
-                    <input type='text' id='discountCodeInput' name='discountCode' placeholder='إضافة كود خصم (اختياري)' maxlength='6' style='padding:10px;border-radius:6px;font-size:1.5rem; border-color:#ec35e3; direction:rtl;'>
+                    <textarea name='address' placeholder='العنوان بالتفصيل' required style='padding:10px;border-radius:6px;font-size:1.2rem;min-height:60px; border-color:#ec35e3; direction:rtl;'></textarea>
+                    <input type='text' id='discountCodeInput' name='discountCode' placeholder='إضافة كود خصم (اختياري)' maxlength='6' style='padding:10px;border-radius:6px;font-size:1.2rem; border-color:#ec35e3; direction:rtl;'>
                     <div id='discountCodeMsg' style='color:#25d366;font-size:1rem;display:none;'></div>
                     <div id='discountCodeError' style='color:#ff4444;font-size:1rem;display:none;'></div>
                     <div id='orderTotalBox' style='font-size:1.4rem;font-weight:bold;text-align:center;margin:8px 0;'></div>
-                    <button type='submit' style='background:#ffb300;color:#222;font-weight:bold;padding:12px 0;border-radius:8px;font-size:1.2rem;cursor:pointer;border:none;'>إرسال الطلب</button>
+                    <button type='submit' style='background:#25d366;color:#222;font-weight:bold;padding:12px 0;border-radius:8px;font-size:1.2rem;cursor:pointer;border:none;'>إرسال الطلب</button>
                 </form>`;
             container.innerHTML = html;
             // تحقق مباشر عند الكتابة
