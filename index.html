@@ -432,6 +432,158 @@
             0% { transform: translateX(100%); }
             100% { transform: translateX(-100%); }
         }
+        /* ألوان زر حالة الطلب حسب الحالة */
+        .order-status-select {
+            appearance: none;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            padding: 6px 28px 6px 8px !important;
+            border-radius: 8px !important;
+            font-weight: bold !important;
+            border: 2px solid #ffb300 !important;
+            background: #ffb300 !important;
+            color: #222 !important;
+            transition: background 0.2s, color 0.2s, border 0.2s;
+            cursor: pointer;
+            min-width: 120px;
+            text-align: center;
+        }
+        .order-status-select.delivered {
+            background: #25d366 !important;
+            color: #fff !important;
+            border-color: #25d366 !important;
+        }
+        .order-status-select.cancelled {
+            background: #ff4444 !important;
+            color: #fff !important;
+            border-color: #ff4444 !important;
+        }
+        .order-status-select.pending {
+            background: #ffb300 !important;
+            color: #222 !important;
+            border-color: #ffb300 !important;
+        }
+        /* --- تحسين شكل فورم الطلب مع Floating Label --- */
+        .order-form-modern {
+            max-width: 400px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            gap: 22px;
+            background: #fff;
+            border-radius: 16px;
+            box-shadow: 0 4px 24px #e0e0e0;
+            padding: 32px 24px 24px 24px;
+            position: relative;
+        }
+        .order-form-modern .form-group {
+            width: 380px;
+            position: relative;
+            margin-bottom: 0;
+        }
+        .order-form-modern input,
+        .order-form-modern textarea {
+            width: 100%;
+            padding: 18px 12px 10px 12px;
+            border: 1.5px solid #eec9d2;
+            border-radius: 8px;
+            font-size: 1.15rem;
+            background: #faf9f6;
+            color: #5a4e7c;
+            outline: none;
+            transition: border 0.2s, box-shadow 0.2s;
+            box-shadow: 0 2px 8px #eec9d2;
+        }
+        .order-form-modern input:focus,
+        .order-form-modern textarea:focus {
+            border: 1.5px solid #b9b4e7;
+            box-shadow: 0 0 0 2px #b9b4e733;
+        }
+        .order-form-modern label {
+            position: absolute;
+            top: 16px;
+            right: -15px;
+            background: transparent;
+            color: #b9b4e7;
+            font-size: 1.1rem;
+            pointer-events: none;
+            transition: 0.2s cubic-bezier(.36,.07,.19,.97);
+            padding: 0 4px;
+            z-index: 2;
+        }
+        .order-form-modern input:not(:placeholder-shown) + label,
+        .order-form-modern input:focus + label,
+        .order-form-modern textarea:not(:placeholder-shown) + label,
+        .order-form-modern textarea:focus + label {
+            top: -10px;
+            right: 2px;
+            font-size: 0.95rem;
+            color: #a1589e;
+            background: #fff;
+            padding: 0 6px;
+            border-radius: 6px;
+        }
+        .order-form-modern textarea {
+            min-height: 60px;
+            resize: vertical;
+        }
+        .order-form-modern button[type="submit"] {
+            background: linear-gradient(90deg, #a1589e 0%, #eec9d2 100%);
+            color: #fff;
+            font-weight: bold;
+            padding: 14px 0;
+            border-radius: 10px;
+            font-size: 1.2rem;
+            cursor: pointer;
+            border: none;
+            margin-top: 10px;
+            box-shadow: 0 2px 8px #eec9d2;
+            transition: background 0.2s, color 0.2s;
+        }
+        .order-form-modern button[type="submit"]:hover {
+            background: linear-gradient(90deg, #eec9d2 0%, #a1589e 100%);
+            color: #fff;
+        }
+        .order-form-modern .error-msg {
+            color: #ff4444;
+            font-size: 1rem;
+            margin-top: 2px;
+            margin-bottom: -10px;
+            min-height: 18px;
+        }
+        .order-form-modern .success-msg {
+            color: #25d366;
+            font-size: 1rem;
+            margin-top: 2px;
+            margin-bottom: -10px;
+            min-height: 18px;
+        }
+        .order-form-modern #orderTotalBox {
+            font-size: 1.2rem;
+            font-weight: bold;
+            text-align: center;
+            margin: 8px 0 0 0;
+        }
+        /* زر عصري موحد للفورم والسلة */
+        .btn-modern {
+            background: linear-gradient(90deg, #a1589e 0%, #eec9d2 100%);
+            color: #fff;
+            font-weight: bold;
+            padding: 14px 0;
+            border-radius: 10px;
+            font-size: 1.2rem;
+            cursor: pointer;
+            border: none;
+            margin-top: 10px;
+            box-shadow: 0 2px 8px #eec9d2;
+            transition: background 0.2s, color 0.2s;
+            width: 100%;
+            max-width: 320px;
+        }
+        .btn-modern:hover {
+            background: linear-gradient(90deg, #eec9d2 0%, #a1589e 100%);
+            color: #fff;
+        }
     </style>
 </head>
 <body>
@@ -444,8 +596,8 @@
         <div style="display:flex;flex-direction:column;align-items:stretch;">
             <!-- شريط ماركي متحرك أعلى اللوجو -->
             <div id="promoBar" style="width:100%;background:#784fe7;color:#fff;font-size:1.5rem;font-weight:bold;letter-spacing:2px;position:relative;overflow:hidden;height:34px;display:flex;align-items:center;justify-content:center;">
-                <div style="white-space:nowrap;display:inline-block;animation:marquee 12s linear infinite;">
-                    Buy 3 Get 1 Free !! &nbsp; • &nbsp; Buy 3 Get 1 Free !! &nbsp; • &nbsp; Buy 3 Get 1 Free!! &nbsp; • &nbsp; Buy 3 Get 1 Free!!
+                <div style="white-space:nowrap;display:inline-block;animation:marquee 20s linear infinite;">
+                    Buy <b style="color: #8f0794;">3</b> & Get <b style="color: #8f0794;">1</b> Free !! &nbsp; • &nbsp; Buy <b style="color: #8f0794;">3</b> & Get <b style="color: #8f0794;">1</b> Free !! &nbsp; • &nbsp; Buy <b style="color: #8f0794;">3</b> & Get <b style="color: #8f0794;">1</b> Free !! &nbsp; • &nbsp;Buy <b style="color: #8f0794;">3</b> & Get <b style="color: #8f0794;">1</b> Free !!
                 </div>
             </div>
        
@@ -1069,7 +1221,7 @@
             // إجمالي السعر
             let total = cart.reduce((sum, item) => sum + (parseFloat(item.priceAfter) * (item.qty || 1)), 0);
             html += `<div style='text-align:center;font-size:1.3rem;margin:18px 0;color:#ff2a04;'>L.E ${total}  <span style='color:#000000;;font-weight:bold;'> : إجمالي السعر </span></div>`;
-            html += `<div style='text-align:center;'><button onclick='showOrderForm()' style='background:#25d366;color:#fff;font-weight:bold;padding:12px 32px;border-radius:8px;font-size:1.2rem;cursor:pointer;border:none;'>تأكيد الطلب</button></div>`;
+            html += `<div style='text-align:center;'><button onclick='showOrderForm()' class='btn-modern'>تأكيد الطلب</button></div>`;
             container.innerHTML = html;
         }
         function changeCartQty(idx, delta) {
@@ -1086,16 +1238,28 @@
         function showOrderForm() {
             const container = document.getElementById('mainContainer');
             let html = `<div class='section-title'>تأكيد الطلب</div>
-                <form id='orderForm' style='max-width:400px;margin:0 auto;display:flex;flex-direction:column;gap:12px;'>
-                    <input type='text' name='name' placeholder='الاسم' required style='padding:10px;border-radius:6px;font-size:1.2rem; border-color:#ec35e3; direction:rtl;'>
-                    <input type='text' id='whatsappInput' name='whatsapp' placeholder='رقم الواتساب' required maxlength='11' pattern='[0-9]{11}' style='padding:10px;border-radius:6px;font-size:1.2rem; border-color:#ec35e3;  direction:rtl;' autocomplete='off'>
-                    <div id='whatsappError' style='color:#ff4444;font-size:1rem;display:none;'></div>
-                    <textarea name='address' placeholder='العنوان بالتفصيل' required style='padding:10px;border-radius:6px;font-size:1.2rem;min-height:60px; border-color:#ec35e3; direction:rtl;'></textarea>
-                    <input type='text' id='discountCodeInput' name='discountCode' placeholder='إضافة كود خصم (اختياري)' maxlength='6' style='padding:10px;border-radius:6px;font-size:1.2rem; border-color:#ec35e3; direction:rtl;'>
-                    <div id='discountCodeMsg' style='color:#25d366;font-size:1rem;display:none;'></div>
-                    <div id='discountCodeError' style='color:#ff4444;font-size:1rem;display:none;'></div>
-                    <div id='orderTotalBox' style='font-size:1.4rem;font-weight:bold;text-align:center;margin:8px 0;'></div>
-                    <button type='submit' style='background:#25d366;color:#ffffff;font-weight:bold;padding:12px 0;border-radius:8px;font-size:1.2rem;cursor:pointer;border:none;'> تأكيد نهائي للطلب</button>
+                <form id='orderForm' class='order-form-modern'>
+                    <div class='form-group'>
+                        <input type='text' name='name' id='orderName' placeholder=' ' required autocomplete='off'/>
+                        <label for='orderName'>الاسم</label>
+                    </div>
+                    <div class='form-group'>
+                        <input type='text' id='whatsappInput' name='whatsapp' placeholder=' ' required maxlength='11' pattern='[0-9]{11}' autocomplete='off'/>
+                        <label for='whatsappInput'>رقم الواتساب</label>
+                        <div id='whatsappError' class='error-msg' style='display:none;'></div>
+                    </div>
+                    <div class='form-group'>
+                        <textarea name='address' id='orderAddress' placeholder=' ' required></textarea>
+                        <label for='orderAddress'>العنوان بالتفصيل</label>
+                    </div>
+                    <div class='form-group'>
+                        <input type='text' id='discountCodeInput' name='discountCode' placeholder=' ' maxlength='6'/>
+                        <label for='discountCodeInput'>إضافة كود خصم (اختياري)</label>
+                        <div id='discountCodeMsg' class='success-msg' style='display:none;'></div>
+                        <div id='discountCodeError' class='error-msg' style='display:none;'></div>
+                    </div>
+                    <div id='orderTotalBox'></div>
+                    <button type='submit'>تأكيد نهائي للطلب</button>
                 </form>`;
             container.innerHTML = html;
             // تحقق مباشر عند الكتابة
@@ -1316,22 +1480,13 @@
         // أضف دالة لتلوين القوائم حسب الحالة
         function styleOrderStatusSelects() {
             document.querySelectorAll('.order-status-select').forEach(sel => {
-                const val = sel.value;
-                if(val === 'تم التوصيل') {
-                    sel.style.background = '#25d366';
-                    sel.style.color = '#fff';
-                    sel.style.fontWeight = 'bold';
-                    sel.style.borderColor = '#25d366';
-                } else if(val === 'ملغي') {
-                    sel.style.background = '#ff4444';
-                    sel.style.color = '#fff';
-                    sel.style.fontWeight = 'bold';
-                    sel.style.borderColor = '#ff4444';
+                sel.classList.remove('delivered', 'cancelled', 'pending');
+                if(sel.value === 'تم التوصيل') {
+                    sel.classList.add('delivered');
+                } else if(sel.value === 'ملغي') {
+                    sel.classList.add('cancelled');
                 } else {
-                    sel.style.background = '#ffb300';
-                    sel.style.color = '#222';
-                    sel.style.fontWeight = 'bold';
-                    sel.style.borderColor = '#ffb300';
+                    sel.classList.add('pending');
                 }
             });
         }
