@@ -1398,8 +1398,8 @@
         // أضف دالة عرض الطلبات في الأدمن
         function renderOrdersList() {
             const container = document.getElementById('mainContainer');
-            container.style.maxWidth = '90vw';
-            container.style.width = '90vw';
+            container.style.maxWidth = '96vw';
+            container.style.width = '96vw';
             container.style.minWidth = '0';
             container.innerHTML = `<div style='display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;'>
                 <div class='section-title' style='margin-bottom:0;'>الطلبات</div>
@@ -1436,7 +1436,7 @@
                                 <div style='display:flex;align-items:center;gap:6px;margin-bottom:4px;'>
                                     <img src='${(item.images && item.images[0]) ? item.images[0] : ''}' style='width:38px;height:38px;object-fit:cover;border-radius:5px;border:1px solid #ffb300;'>
                                     <span style='font-size:1rem;color:#ffb300;font-weight:bold;'>${item.name}</span>
-                                    <span style='font-size:0.95rem;color:#fff;'>× ${item.qty}</span>
+                                    <span style='font-size:0.95rem;color:#000000;'>× ${item.qty}</span>
                                 </div>
                             `).join('');
                         }
@@ -1558,8 +1558,8 @@
         // --- صفحة أكواد الخصم في الأدمن ---
         function renderDiscountCodesPage() {
             const container = document.getElementById('mainContainer');
-            container.style.maxWidth = '90vw';
-            container.style.width = '90vw';
+            container.style.maxWidth = '96vw';
+            container.style.width = '96vw';
             container.style.minWidth = '0';
             container.innerHTML = `<div style='display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;'>
                 <div class='section-title' style='margin-bottom:0;'>أكواد الخصم</div>
