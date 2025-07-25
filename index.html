@@ -584,6 +584,45 @@
             background: linear-gradient(90deg, #eec9d2 0%, #a1589e 100%);
             color: #fff;
         }
+        @media (max-width: 600px) {
+          .order-form-modern {
+            max-width: 98vw;
+            padding: 14px 4vw 18px 4vw;
+            border-radius: 12px;
+            gap: 14px;
+          }
+          .order-form-modern input,
+          .order-form-modern textarea {
+            font-size: 1rem;
+            padding: 14px 8px 8px 8px;
+            border-radius: 7px;
+          }
+          .order-form-modern label {
+            top: 10px;
+            right: 2px;
+            font-size: 1rem;
+            padding: 0 2px;
+          }
+          .order-form-modern input:not(:placeholder-shown) + label,
+          .order-form-modern input:focus + label,
+          .order-form-modern textarea:not(:placeholder-shown) + label,
+          .order-form-modern textarea:focus + label {
+            top: -12px;
+            right: 1px;
+            font-size: 0.85rem;
+            padding: 0 4px;
+          }
+          .order-form-modern button[type="submit"],
+          .btn-modern {
+            font-size: 1rem;
+            padding: 12px 0;
+            border-radius: 8px;
+            max-width: 100%;
+          }
+          .order-form-modern #orderTotalBox {
+            font-size: 1rem;
+          }
+        }
     </style>
 </head>
 <body>
