@@ -466,7 +466,6 @@
         /* --- تحسين شكل فورم الطلب مع Floating Label --- */
         .order-form-modern {
             max-width: 400px;
-            width: 95vw;
             margin: 0 auto;
             display: flex;
             flex-direction: column;
@@ -474,17 +473,17 @@
             background: #fff;
             border-radius: 16px;
             box-shadow: 0 4px 24px #e0e0e0;
-            padding: 24px 8px 18px 8px;
+            padding: 32px 24px 24px 24px;
             position: relative;
         }
         .order-form-modern .form-group {
+            width: 380px;
             position: relative;
             margin-bottom: 0;
         }
         .order-form-modern input,
         .order-form-modern textarea {
-            width: 100%;
-            box-sizing: border-box;
+            width: 95%;
             padding: 18px 12px 10px 12px;
             border: 1.5px solid #eec9d2;
             border-radius: 8px;
@@ -494,12 +493,17 @@
             outline: none;
             transition: border 0.2s, box-shadow 0.2s;
             box-shadow: 0 2px 8px #eec9d2;
-            margin: 0;
+        }
+        .order-form-modern input:focus,
+        .order-form-modern textarea:focus {
+            border: 1.5px solid #b9b4e7;
+            box-shadow: 0 0 0 2px #b9b4e733;
         }
         .order-form-modern label {
             position: absolute;
+
             top: 16px;
-            right: 4px;
+            right: 5px;
             background: transparent;
             color: #b9b4e7;
             font-size: 1.1rem;
@@ -520,32 +524,9 @@
             padding: 0 6px;
             border-radius: 6px;
         }
-        @media (max-width: 600px) {
-            .order-form-modern {
-                max-width: 99vw;
-                width: 99vw;
-                padding: 10px 2vw 12px 2vw;
-                border-radius: 10px;
-                box-shadow: 0 2px 8px #e0e0e0;
-            }
-            .order-form-modern input,
-            .order-form-modern textarea {
-                font-size: 1rem;
-                padding: 14px 8px 8px 8px;
-                border-radius: 7px;
-            }
-            .order-form-modern label {
-                right: 2px;
-                font-size: 1rem;
-            }
-            .order-form-modern input:not(:placeholder-shown) + label,
-            .order-form-modern input:focus + label,
-            .order-form-modern textarea:not(:placeholder-shown) + label,
-            .order-form-modern textarea:focus + label {
-                right: 1px;
-                font-size: 0.9rem;
-                padding: 0 4px;
-            }
+        .order-form-modern textarea {
+            min-height: 60px;
+            resize: vertical;
         }
         .order-form-modern button[type="submit"] {
             background: linear-gradient(90deg, #a1589e 0%, #eec9d2 100%);
