@@ -895,14 +895,137 @@
             container.style.minWidth = '';
             let html = `<div class='admin-panel'>
                 <h2>Admin Panel</h2>
-                <button class='add-product-btn' onclick='showProductForm()'>+ Add New Product</button>
-                <button class='add-product-btn' style='background:#25d366;margin-right:10px;' onclick='renderOrdersList()'>عرض الطلبات</button>
-                <button class='add-product-btn' style='background:#007bff;margin-right:10px;' onclick='renderDiscountCodesPage()'>أكواد الخصم</button>
+                <div style='display:flex;gap:10px;flex-wrap:wrap;margin-bottom:18px;'>
+                    <button class='add-product-btn' onclick='showProductForm()'>+ Add New Product</button>
+                    <button class='add-product-btn' style='background:#25d366;' onclick='renderOrdersList()'>عرض الطلبات</button>
+                    <button class='add-product-btn' style='background:#007bff;' onclick='renderDiscountCodesPage()'>أكواد الخصم</button>
+                    <button class='add-product-btn' style='background:#ffb300;color:#222;' onclick='renderAnalysisPanel()'>Analysis</button>
+                </div>
+                <div id='analysisPanelContainer'></div>
                 <div id='productFormContainer' style='background:#007bff;margin-right:10px;'></div>
                 <div class='products-list' id='adminProductsList'></div>
             </div>`;
             container.innerHTML = html;
             renderAdminProductsList();
+        // دالة عرض لوحة التحليل
+        function renderAnalysisPanel() {
+            const analysisContainer = document.getElementById('analysisPanelContainer');
+            if (!analysisContainer) return;
+            // فلاتر التاريخ
+            let html = `<div style='display:flex;gap:12px;align-items:center;margin-bottom:18px;flex-wrap:wrap;'>
+                <label>من تاريخ: <input type='date' id='analysisFromDate' style='padding:4px 8px;border-radius:6px;border:1px solid #ccc;'/></label>
+                <label>إلى تاريخ: <input type='date' id='analysisToDate' style='padding:4px 8px;border-radius:6px;border:1px solid #ccc;'/></label>
+                <button onclick='updateAnalysisPanel()' style='background:#25d366;color:#fff;font-weight:bold;padding:6px 18px;border-radius:8px;font-size:1rem;cursor:pointer;border:none;'>فلترة</button>
+                <button onclick='clearAnalysisFilters()' style='background:#ff4444;color:#fff;font-weight:bold;padding:6px 18px;border-radius:8px;font-size:1rem;cursor:pointer;border:none;'>مسح الفلاتر</button>
+            </div>`;
+            html += `<div id='analysisStatsBoxes' style='display:flex;gap:18px;flex-wrap:wrap;'></div>`;
+            analysisContainer.innerHTML = html;
+            updateAnalysisPanel();
+        }
+
+        // تحديث بيانات التحليل
+        function updateAnalysisPanel() {
+            const statsBoxes = document.getElementById('analysisStatsBoxes');
+            if (!statsBoxes) return;
+            // جلب التاريخ من الفلاتر
+            let fromDate = document.getElementById('analysisFromDate')?.value;
+            let toDate = document.getElementById('analysisToDate')?.value;
+            let from = fromDate ? new Date(fromDate + 'T00:00:00') : null;
+            let to = toDate ? new Date(toDate + 'T23:59:59') : null;
+
+            // المنتجات
+            let manCount = products.filter(p => p.type === 'man' && !p.hidden).length;
+            let womanCount = products.filter(p => p.type === 'woman' && !p.hidden).length;
+            let totalProducts = manCount + womanCount;
+
+            // أكواد الخصم
+            firebase.database().ref('discountCodes').once('value', snap => {
+                const codes = Object.values(snap.val() || {});
+                let discountCodesCount = codes.length;
+
+                // الطلبات
+                firebase.database().ref('orders').once('value', snap2 => {
+                    const ordersArr = Object.values(snap2.val() || {});
+                    // فلترة حسب التاريخ
+                    let filteredOrders = ordersArr;
+                    if (from || to) {
+                        filteredOrders = ordersArr.filter(order => {
+                            if (!order.time) return false;
+                            let orderDate = parseOrderDate(order.time);
+                            if (!orderDate) return false;
+                            if (from && orderDate < from) return false;
+                            if (to && orderDate > to) return false;
+                            return true;
+                        });
+                    }
+                    let cancelled = filteredOrders.filter(o => o.status === 'ملغي').length;
+                    let pending = filteredOrders.filter(o => !o.status || o.status === 'قيد الانتظار' || o.status === 'pending').length;
+                    let delivered = filteredOrders.filter(o => o.status === 'تم التوصيل').length;
+
+                    // عرض المربعات
+                    let statsHtml = `
+                        <div style='background:#fff;border-radius:12px;box-shadow:0 2px 8px #e0e0e0;padding:18px 24px;min-width:180px;min-height:90px;display:flex;flex-direction:column;align-items:center;justify-content:center;'>
+                            <div style='font-size:1.2rem;color:#784fe7;font-weight:bold;'>منتجات Man</div>
+                            <div style='font-size:2.1rem;font-weight:bold;color:#232323;'>${manCount}</div>
+                        </div>
+                        <div style='background:#fff;border-radius:12px;box-shadow:0 2px 8px #e0e0e0;padding:18px 24px;min-width:180px;min-height:90px;display:flex;flex-direction:column;align-items:center;justify-content:center;'>
+                            <div style='font-size:1.2rem;color:#784fe7;font-weight:bold;'>منتجات Woman</div>
+                            <div style='font-size:2.1rem;font-weight:bold;color:#232323;'>${womanCount}</div>
+                        </div>
+                        <div style='background:#fff;border-radius:12px;box-shadow:0 2px 8px #e0e0e0;padding:18px 24px;min-width:180px;min-height:90px;display:flex;flex-direction:column;align-items:center;justify-content:center;'>
+                            <div style='font-size:1.2rem;color:#784fe7;font-weight:bold;'>إجمالي المنتجات</div>
+                            <div style='font-size:2.1rem;font-weight:bold;color:#232323;'>${totalProducts}</div>
+                        </div>
+                        <div style='background:#fff;border-radius:12px;box-shadow:0 2px 8px #e0e0e0;padding:18px 24px;min-width:180px;min-height:90px;display:flex;flex-direction:column;align-items:center;justify-content:center;'>
+                            <div style='font-size:1.2rem;color:#25d366;font-weight:bold;'>عدد أكواد الخصم</div>
+                            <div style='font-size:2.1rem;font-weight:bold;color:#25d366;'>${discountCodesCount}</div>
+                        </div>
+                        <div style='background:#fff;border-radius:12px;box-shadow:0 2px 8px #e0e0e0;padding:18px 24px;min-width:180px;min-height:90px;display:flex;flex-direction:column;align-items:center;justify-content:center;'>
+                            <div style='font-size:1.2rem;color:#ff4444;font-weight:bold;'>الطلبات الملغية</div>
+                            <div style='font-size:2.1rem;font-weight:bold;color:#ff4444;'>${cancelled}</div>
+                        </div>
+                        <div style='background:#fff;border-radius:12px;box-shadow:0 2px 8px #e0e0e0;padding:18px 24px;min-width:180px;min-height:90px;display:flex;flex-direction:column;align-items:center;justify-content:center;'>
+                            <div style='font-size:1.2rem;color:#ffb300;font-weight:bold;'>قيد الانتظار</div>
+                            <div style='font-size:2.1rem;font-weight:bold;color:#ffb300;'>${pending}</div>
+                        </div>
+                        <div style='background:#fff;border-radius:12px;box-shadow:0 2px 8px #e0e0e0;padding:18px 24px;min-width:180px;min-height:90px;display:flex;flex-direction:column;align-items:center;justify-content:center;'>
+                            <div style='font-size:1.2rem;color:#25d366;font-weight:bold;'>تم التوصيل</div>
+                            <div style='font-size:2.1rem;font-weight:bold;color:#25d366;'>${delivered}</div>
+                        </div>
+                    `;
+                    statsBoxes.innerHTML = statsHtml;
+                });
+            });
+        }
+
+        // دالة مسح الفلاتر
+        function clearAnalysisFilters() {
+            document.getElementById('analysisFromDate').value = '';
+            document.getElementById('analysisToDate').value = '';
+            updateAnalysisPanel();
+        }
+
+        // دالة لتحويل نص التاريخ إلى كائن Date (يدعم toLocaleString)
+        function parseOrderDate(str) {
+            // يحاول تحويل النص إلى تاريخ
+            // يقبل صيغ مثل: 7/26/2025, 12:34:56 PM
+            let d = new Date(str);
+            if (!isNaN(d)) return d;
+            // إذا فشل، جرب تقسيم النص
+            let parts = str.split(',');
+            if (parts.length > 1) {
+                let datePart = parts[0].trim();
+                let timePart = parts[1].trim();
+                let d2 = new Date(datePart + 'T' + timePart);
+                if (!isNaN(d2)) return d2;
+            }
+            return null;
+        }
+
+        // اجعل الدالة متاحة عالمياً
+        window.renderAnalysisPanel = renderAnalysisPanel;
+        window.updateAnalysisPanel = updateAnalysisPanel;
+        window.clearAnalysisFilters = clearAnalysisFilters;
         }
 
         // نموذج إضافة/تعديل منتج
@@ -1571,7 +1694,12 @@
             // جلب الأكواد من قاعدة البيانات
             firebase.database().ref('discountCodes').on('value', snapshot => {
                 const val = snapshot.val() || {};
-                const codes = Object.values(val);
+                const codes = Object.values(val).sort((a, b) => {
+                    if (a.createdAt && b.createdAt) {
+                        return new Date(b.createdAt) - new Date(a.createdAt);
+                    }
+                    return b.code.localeCompare(a.code);
+                });
                 let html = '';
                 if (!codes.length) {
                     html = '<div style="text-align:center;">لا توجد أكواد خصم بعد.</div>';
@@ -1586,9 +1714,20 @@
                             </tr>
                         </thead>
                         <tbody>`;
-                    codes.reverse().forEach(code => {
+                    codes.forEach(code => {
+                        let usageInfo = '';
+                        const used = code.usedCount || 0;
+                        const maxUses = code.maxUses || 1;
+                        const remaining = maxUses - used;
+                        // Always show usage info for all codes
+                        let remainingColor = remaining === 0 ? '#ff4444' : (remaining < 3 ? '#ffb300' : '#25d366');
+                        if (used > 0 || maxUses > 1) {
+                            usageInfo = `<span style='color:#25d366;font-size:0.95em;margin-right:8px;'>تم الاستخدام (${used})</span> - <span style='color:${remaining === 0 ? '#ff4444' : '#888'};font-size:0.95em;margin-right:4px;'>متبقي (${remaining})</span>`;
+                        } else {
+                            usageInfo = `<span style='color:${remaining === 0 ? '#ff4444' : '#888'};font-size:0.95em;margin-right:8px;'>متبقي (${remaining})</span>`;
+                        }
                         html += `<tr style='border-bottom:1px solid #333;'>
-                            <td style='padding:8px 6px;font-weight:bold;'>${code.code}</td>
+                            <td style='padding:8px 6px;font-weight:bold;'>${code.code} ${usageInfo}</td>
                             <td style='padding:8px 6px;'>${code.amount} جنيه</td>
                             <td style='padding:8px 6px;'>${code.expires ? new Date(code.expires).toLocaleString() : ''}</td>
                             <td style='padding:8px 6px;text-align:center;'>
@@ -1600,12 +1739,15 @@
                     });
                     html += `</tbody></table></div>`;
                 }
-                document.getElementById('discountCodesList').innerHTML = html;
+                var discountCodesList = document.getElementById('discountCodesList');
+                if (discountCodesList) {
+                    discountCodesList.innerHTML = html;
+                }
             });
         }
         function showAddDiscountCodeForm() {
             document.getElementById('discountCodesFormContainer').innerHTML = `
-                <form id='addDiscountCodeForm' style='background:#232323;padding:18px 20px;border-radius:10px;margin-bottom:18px;max-width:400px;'>
+                <form id='addDiscountCodeForm' style='background:#232323; color:red;padding:18px 20px;border-radius:10px;margin-bottom:18px;max-width:400px;'>
                     <label>كود الخصم (6 أحرف أو أرقام)</label>
                     <input type='text' name='code' maxlength='6' required pattern='[A-Za-z0-9]{6}' style='width:100%;padding:8px;border-radius:6px;margin-bottom:10px;font-size:1.1rem;'>
                     <label>قيمة الخصم (جنيه)</label>
@@ -1683,4 +1825,4 @@
         });
     </script>
 </body>
-</html>
+</html>ر
